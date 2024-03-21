@@ -1,0 +1,6 @@
+@api_gestao_despesas_HostAddress = http://localhost:5286
+
+GET {{api_gestao_despesas_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
