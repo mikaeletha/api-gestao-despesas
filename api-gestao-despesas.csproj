@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>api_gestao_despesas</RootNamespace>
   </PropertyGroup>
@@ -16,3 +16,4 @@
   </ItemGroup>
 
 </Project>
+
