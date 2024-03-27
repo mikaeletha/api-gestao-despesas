@@ -7,7 +7,7 @@ namespace api_gestao_despesas.Models
     public class Friend
     {
         [Key]
-        public int Id_amigo { get; set; }
+        public int Id_friend { get; set; }
         [Required]
         public string CPF { get; set; }
 
