@@ -3,8 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace api_gestao_despesas.Models
 {
-    [Table("Amigos")]
-    public class Amigo
+    [Table("Friends")]
+    public class Friend
     {
         [Key]
         public int Id_amigo { get; set; }
