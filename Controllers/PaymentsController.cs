@@ -1,63 +1,86 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
 using api_gestao_despesas.Models;
+using api_gestao_despesas.DTO.Request;
+using api_gestao_despesas.DTO.Response;
+using api_gestao_despesas.Repository.Interface;
+using AutoMapper;
 
 namespace api_gestao_despesas.Controllers
 {
-    public class PaymentController : Controller
+    [Route("api/[controller]")]
+    [ApiController]
+    public class PaymentsController : ControllerBase
     {
-        
-        //codigo classe payment
-        private readonly List<Payment> _payments = new List<Payment>(); // Simulação de um repositório de pagamentos
+        private readonly IMapper _mapper;
+        private readonly IPaymentRepository _repository;
 
-        [HttpPost("payment")]
-        public ActionResult<Payment> CreatePayment([FromBody] Payment payment)
+        public PaymentsController(IMapper mapper, IPaymentRepository repository)
         {
-            _payments.Add(payment);
-            return CreatedAtAction(nameof(GetPaymentById), new { paymentId = payment.PaymentId }, payment);
+            _mapper = mapper;
+            _repository = repository;
         }
 
-        [HttpGet("payment/{paymentId}")]
-        public ActionResult<Payment> GetPaymentById(int paymentId)
+
+
+        // GET: api/Payments
+        [HttpGet]
+        public async Task<ActionResult> GetAll()
         {
-            var payment = _payments.FirstOrDefault(p => p.PaymentId == paymentId);
-            if (payment == null)
-                return NotFound();
-            return payment;
+            var payments = await _repository.GetAll();
+            return Ok(_mapper.Map<List<PaymentResponseDTO>>(payments));
         }
 
-        [HttpGet("payment")]
-        public ActionResult<IEnumerable<Payment>> GetAllPayments()
+        // GET: api/Payments/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Payment>> GetPayment(int id)
         {
-            return _payments;
+            var getPayment = await _repository.GetById(id);
+            if (getPayment == null)
+            {
+                return BadRequest("Pagamento não encontrado");
+            }
+
+            return Ok(_mapper.Map<PaymentResponseDTO>(getPayment)); ;
         }
 
-        [HttpPut("payment/{paymentId}")]
-        public IActionResult UpdatePayment(int paymentId, [FromBody] Payment updatedPayment)
+        // PUT: api/Payment/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutPayment(int id, PaymentRequestDTO paymentRequestDTO)
         {
-            var payment = _payments.FirstOrDefault(p => p.PaymentId == paymentId);
-            if (payment == null)
-                return NotFound();
+            var getPayment = await _repository.GetById(id);
+            if (getPayment == null)
+            {
+                return BadRequest("Ocorreu um erro ao alterar o pagamenyto");
+            }
+            var updatePayment = _mapper.Map<Payment>(paymentRequestDTO);
+            var updatedPayment = await _repository.Create(updatePayment);
 
-            // Atualizar os campos do pagamento
-            // Exemplo: payment.Amount = updatedPayment.Amount;
-
-            return NoContent();
+            return Ok(_mapper.Map<PaymentResponseDTO>(updatedPayment));
         }
 
-        [HttpDelete("payment/{paymentId}")]
-        public IActionResult DeletePayment(int paymentId)
+        // POST: api/Payments
+        [HttpPost]
+        public async Task<ActionResult<Payment>> PostPayment(PaymentRequestDTO paymentRequestDTO)
         {
-            var payment = _payments.FirstOrDefault(p => p.PaymentId == paymentId);
-            if (payment == null)
-                return NotFound();
+            var createPayment = _mapper.Map<Payment>(paymentRequestDTO);
+            if (createPayment == null)
+            {
+                return BadRequest("Ocorreu um erro ao incluir o pagamento");
+            }
+            var savedPayment = await _repository.Create(createPayment);
+            return Ok(_mapper.Map<PaymentResponseDTO>(savedPayment));
+        }
 
-            _payments.Remove(payment);
+        // DELETE: api/Payments/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeletePayment(int id)
+        {
+            var getPayment = await _repository.GetById(id);
+            if (getPayment == null)
+            {
+                return BadRequest("Pagamento não encontrado");
+            }
+            var deletePayment = await _repository.Delete(id);
             return NoContent();
         }
     }
