@@ -8,19 +8,9 @@ namespace api_gestao_despesas.DTO.Response
     {
 
         [Key]
-        public int PaymentId { get; set; }
+        public int Id { get; set; }
 
         [Required]
         public decimal Amount { get; set; }
-
-        public Payment MapExpenseFromPaymentResponseDTO(PaymentResponseDTO paymentResponseDTO)
-        {
-            Payment payment = new Payment();
-
-            payment.Amount = paymentResponseDTO.Amount;
-            payment.PaymentId = paymentResponseDTO.PaymentId;
-
-            return payment;
-        }
     }
 }
