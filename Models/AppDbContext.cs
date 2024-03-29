@@ -12,5 +12,18 @@ namespace api_gestao_despesas.Models
         public DbSet<Expense> Expenses { get; set; }
 
         public DbSet<Payment> Payments { get; set; }
+<<<<<<< Updated upstream
+=======
+
+        public DbSet<Group> Groups { get; set; }
+
+        public DbSet<Friend> Friends { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+            builder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
+        }
+>>>>>>> Stashed changes
     }
 }
