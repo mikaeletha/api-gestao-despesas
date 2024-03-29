@@ -20,11 +20,13 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 // Repositories
 builder.Services.AddScoped<IExpenseRepository, ExpenseRepository>();
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
+builder.Services.AddScoped<IGroupsRepository, GroupsRepository>();
 
 
 // Services
 //builder.Services.AddScoped<IExpenseService, ExpenseService>();
 //builder.Services.AddScoped<IPaymentService, PaymentService>();
+//builder.Services.AddScoped<IGroupsService, GroupsService>();
 
 var app = builder.Build();
 
