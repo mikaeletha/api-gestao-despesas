@@ -12,7 +12,7 @@ namespace api_gestao_despesas.Controllers
     public class GroupsController : ControllerBase
     {
         private readonly IMapper _mapper;
-        private readonly IPaymentRepository _repository;
+        private readonly IGroupsRepository _repository;
 
         public GroupsController(IMapper mapper, IGroupsRepository repository)
         {

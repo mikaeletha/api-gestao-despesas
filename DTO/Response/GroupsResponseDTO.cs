@@ -13,14 +13,5 @@ namespace api_gestao_despesas.DTO.Response
         [Required]
         public string NameGroup { get; set; }
 
-        public Group MapExpenseFro ResponseDTO(GroupsResponseDTO groupsResponseDTO)
-        {
-            Group groups = new Group();
-
-            groups.Amount = groupsResponseDTO.IdGroup;
-            groups.PaymentId = groupsResponseDTO.NameGroup;
-
-            return groups;
-        }
     }
 }

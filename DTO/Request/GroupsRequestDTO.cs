@@ -12,14 +12,5 @@ namespace api_gestao_despesas.DTO.Request
         [Required]
         public string  NameGroup { get; set; }
 
-        public Group MapExpenseFromGroupsRequestDTO(GroupsRequestDTO groupRequestDTO)
-        {
-            Group groups= new Group();
-
-            groups.Id_friend = paymentRequestDTO.Id_friend;
-            groups.NameGroup = paymentRequestDTO.NameGroup;
-
-            return groups;
-        }
     }
 }
