@@ -7,9 +7,10 @@ namespace api_gestao_despesas.Models
     public class Expense
     {
         [Key]
-        public int ExpensesId { get; set; }
+        public int Id { get; set; }
 
         [Required]
+        [Column(TypeName ="decimal(18, 2)")]
         public decimal ValueExpense { get; set; }
 
         [Required]
@@ -23,5 +24,12 @@ namespace api_gestao_despesas.Models
 
         [Required]
         public ICollection<Payment> Payments { get; set; }
+
+        public Expense(decimal valueExpense, DateTime date, string description)
+        {
+            ValueExpense = valueExpense;
+            Date = date;
+            Description = description;
+        }
     }
 }

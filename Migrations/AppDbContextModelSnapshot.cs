@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using api_gestao_despesas.Models;
 
@@ -17,50 +18,56 @@ namespace api_gestao_despesas.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "8.0.3")
-                .HasAnnotation("Relational:MaxIdentifierLength", 64);
+                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("api_gestao_despesas.Models.Expense", b =>
                 {
-                    b.Property<int>("ExpensesId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
                     b.Property<DateTime>("Date")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("GroupId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("ValueExpense")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
-                    b.HasKey("ExpensesId");
+                    b.HasKey("Id");
 
                     b.ToTable("Expense");
                 });
 
             modelBuilder.Entity("api_gestao_despesas.Models.Payment", b =>
                 {
-                    b.Property<int>("PaymentId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
                     b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<int?>("ExpenseId")
+                        .HasColumnType("int");
 
                     b.Property<int>("ExpensesId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ExpensesId1")
-                        .HasColumnType("int");
+                    b.HasKey("Id");
 
-                    b.HasKey("PaymentId");
-
-                    b.HasIndex("ExpensesId1");
+                    b.HasIndex("ExpenseId");
 
                     b.ToTable("Payments");
                 });
@@ -69,9 +76,7 @@ namespace api_gestao_despesas.Migrations
                 {
                     b.HasOne("api_gestao_despesas.Models.Expense", "Expense")
                         .WithMany("Payments")
-                        .HasForeignKey("ExpensesId1")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ExpenseId");
 
                     b.Navigation("Expense");
                 });

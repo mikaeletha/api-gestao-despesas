@@ -13,5 +13,12 @@ namespace api_gestao_despesas.Models
 
         public DbSet<Payment> Payments { get; set; }
 
+        public DbSet<Group> Groups { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+            builder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
+        }
     }
 }
