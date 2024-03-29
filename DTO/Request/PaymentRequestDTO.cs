@@ -13,15 +13,5 @@ namespace api_gestao_despesas.DTO.Request
 
         [Required]
         public int ExpensesId { get; set; }
-
-        public Payment MapExpenseFromPaymentRequestDTO(PaymentRequestDTO paymentRequestDTO)
-        {
-            Payment payment= new Payment();
-
-            payment.Amount = paymentRequestDTO.Amount;
-            payment.ExpensesId = paymentRequestDTO.ExpensesId;
-
-            return payment;
-        }
     }
 }

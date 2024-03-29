@@ -44,19 +44,19 @@ namespace api_gestao_despesas.Controllers
         }
 
         //// PUT: api/Expenses/5
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> PutExpense(int id, ExpenseRequestDTO expenseRequestDTO)
-        //{
-        //    var findExpense = await _repository.GetById(id);
-        //    if (findExpense == null)
-        //    {
-        //        return BadRequest("Ocorreu um erro ao alterar a despesa");
-        //    }
-        //    var updateExpense = _mapper.Map<Expense>(expenseRequestDTO);
-        //    var updatedExpense = await _repository.Create(updateExpense);
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutExpense(int id, ExpenseRequestDTO expenseRequestDTO)
+        {
+            var findExpense = await _repository.GetById(id);
+            if (findExpense == null)
+            {
+                return BadRequest("Ocorreu um erro ao alterar a despesa");
+            }
+            var updateExpense = _mapper.Map<Expense>(expenseRequestDTO);
+            var updatedExpense = await _repository.Create(updateExpense);
 
-        //    return Ok(_mapper.Map<ExpenseResponseDTO>(updatedExpense));
-        //}
+            return Ok(_mapper.Map<ExpenseResponseDTO>(updatedExpense));
+        }
 
         // POST: api/Expenses
         [HttpPost]
