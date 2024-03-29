@@ -8,7 +8,7 @@ namespace api_gestao_despesas.DTO.Response
     {
         
         [Key]
-        public int ExpensesId { get; set; }
+        public int Id { get; set; }
 
         [Required]
         public decimal ValueExpense { get; set; }
