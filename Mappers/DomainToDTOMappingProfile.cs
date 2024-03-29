@@ -11,8 +11,11 @@ namespace api_gestao_despesas.Mappers
         {
             CreateMap<Payment, PaymentRequestDTO>().ReverseMap();
             CreateMap<Expense, ExpenseRequestDTO>().ReverseMap();
+            CreateMap<Group, GroupsRequestDTO>().ReverseMap();
             CreateMap<Payment, PaymentResponseDTO>().ReverseMap();
             CreateMap<Expense, ExpenseResponseDTO>().ReverseMap();
+            CreateMap<Group, GroupsResponseDTO>().ReverseMap();
+
         }
     }
 }
