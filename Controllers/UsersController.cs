@@ -1,7 +1,10 @@
-﻿using api_gestao_despesas.Models;
+﻿using api_gestao_despesas.DTO.Request;
+using api_gestao_despesas.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 
 namespace api_gestao_despesas.Controllers
 {
@@ -23,13 +26,22 @@ namespace api_gestao_despesas.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Create(User model)
+        public async Task<ActionResult> Create(UsersRequestDTO model)
         {
-            _context.Users.Add(model);
+            User novo = new User()
+            {
+                Name = model.Name,
+                Email = model.Email,
+                Password = BCrypt.Net.BCrypt.HashPassword(model.Password),
+                PhoneNumber = model.PhoneNumber
+            };
+
+            model.Password = BCrypt.Net.BCrypt.HashPassword(model.Password);
+
+            _context.Users.Add(novo);
             await _context.SaveChangesAsync();
 
-            // return Ok(model);
-            return CreatedAtAction("GetById", new { id = model.Id }, model);
+            return CreatedAtAction("GetById", new { id = novo.Id }, novo);
         }
 
         [HttpGet("{id}")]
@@ -44,7 +56,7 @@ namespace api_gestao_despesas.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> Update(int id, User model)
+        public async Task<ActionResult> Update(int id, UsersRequestDTO model)
         {
             if (id != model.Id) return BadRequest();
 
@@ -52,6 +64,11 @@ namespace api_gestao_despesas.Controllers
                 .FirstOrDefaultAsync(c => c.Id == id);
 
             if (modeloDb == null) return NotFound();
+
+            modeloDb.Name = model.Name;
+            modeloDb.Email = model.Email;
+            modeloDb.Password = BCrypt.Net.BCrypt.HashPassword(model.Password);
+            modeloDb.PhoneNumber = model.PhoneNumber;
 
             _context.Users.Update(modeloDb);
             await _context.SaveChangesAsync();

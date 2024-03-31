@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace api_gestao_despesas.Models 
 { 
@@ -14,6 +15,7 @@ namespace api_gestao_despesas.Models
     [EmailAddress]
     public string Email { get; set; }
     [Required]
+    [JsonIgnore]
     public string Password { get; set; }
     [Required]
     [Phone]
