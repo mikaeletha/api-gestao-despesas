@@ -8,10 +8,11 @@ namespace api_gestao_despesas.Models
     {
         [Key]
         public int IdGroup { get; set; }
+
         [Required]
         public int Id_friend { get; set; }
+
         [Required]
         public string NameGroup { get; set; }
-
     }
 }

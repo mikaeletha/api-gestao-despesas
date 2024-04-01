@@ -48,6 +48,26 @@ namespace api_gestao_despesas.Migrations
                     b.ToTable("Expense");
                 });
 
+            modelBuilder.Entity("api_gestao_despesas.Models.Group", b =>
+                {
+                    b.Property<int>("IdGroup")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdGroup"));
+
+                    b.Property<int>("Id_friend")
+                        .HasColumnType("int");
+
+                    b.Property<string>("NameGroup")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("IdGroup");
+
+                    b.ToTable("Groups");
+                });
+
             modelBuilder.Entity("api_gestao_despesas.Models.Payment", b =>
                 {
                     b.Property<int>("Id")
@@ -59,10 +79,7 @@ namespace api_gestao_despesas.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18, 2)");
 
-                    b.Property<int?>("ExpenseId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ExpensesId")
+                    b.Property<int>("ExpenseId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -76,7 +93,9 @@ namespace api_gestao_despesas.Migrations
                 {
                     b.HasOne("api_gestao_despesas.Models.Expense", "Expense")
                         .WithMany("Payments")
-                        .HasForeignKey("ExpenseId");
+                        .HasForeignKey("ExpenseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Expense");
                 });

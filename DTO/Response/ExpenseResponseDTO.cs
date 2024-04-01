@@ -6,7 +6,6 @@ namespace api_gestao_despesas.DTO.Response
 {
     public class ExpenseResponseDTO
     {
-        
         [Key]
         public int Id { get; set; }
 
@@ -18,5 +17,8 @@ namespace api_gestao_despesas.DTO.Response
 
         [Required]
         public string Description { get; set; }
+
+        [Required]
+        public ICollection<PaymentResponseDTO> Payments { get; set; }
     }
 }

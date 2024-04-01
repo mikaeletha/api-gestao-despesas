@@ -6,7 +6,6 @@ namespace api_gestao_despesas.DTO.Response
 {
     public class GroupsResponseDTO
     {
-
         [Key]
         public int IdGroup { get; set; }
 

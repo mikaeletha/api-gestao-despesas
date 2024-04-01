@@ -6,7 +6,6 @@ namespace api_gestao_despesas.DTO.Response
 {
     public class PaymentResponseDTO
     {
-
         [Key]
         public int Id { get; set; }
 

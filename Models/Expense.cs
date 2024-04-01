@@ -24,12 +24,5 @@ namespace api_gestao_despesas.Models
 
         [Required]
         public ICollection<Payment> Payments { get; set; }
-
-        public Expense(decimal valueExpense, DateTime date, string description)
-        {
-            ValueExpense = valueExpense;
-            Date = date;
-            Description = description;
-        }
     }
 }

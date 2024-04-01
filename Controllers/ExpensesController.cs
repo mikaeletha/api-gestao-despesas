@@ -20,8 +20,6 @@ namespace api_gestao_despesas.Controllers
             _repository = repository;
         }
 
-
-
         // GET: api/Expenses
         [HttpGet]
         public async Task<ActionResult> GetAll()
@@ -32,35 +30,38 @@ namespace api_gestao_despesas.Controllers
 
         // GET: api/Expenses/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Expense>> GetExpense(int id)
+        public async Task<ActionResult<Expense>> GetExpense([FromRoute] int id)
         {
             var getExpense = await _repository.GetById(id); // Procura uma despesa por ID
             if (getExpense == null)
             {
                 return BadRequest("Despesa não encontrada");
             }
-
             return Ok(_mapper.Map<ExpenseResponseDTO>(getExpense)); ;
         }
 
         //// PUT: api/Expenses/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutExpense(int id, ExpenseRequestDTO expenseRequestDTO)
+        public async Task<IActionResult> PutExpense([FromRoute]int id, [FromBody] ExpenseRequestDTO expenseRequestDTO)
         {
             var findExpense = await _repository.GetById(id);
             if (findExpense == null)
             {
-                return BadRequest("Ocorreu um erro ao alterar a despesa");
+                return BadRequest("Despesa não encontrada");
             }
-            var updateExpense = _mapper.Map<Expense>(expenseRequestDTO);
-            var updatedExpense = await _repository.Create(updateExpense);
+            var expense = _mapper.Map<Expense>(expenseRequestDTO);
+            var updatedExpense = await _repository.Update(id, expense);
 
+            if (updatedExpense == null)
+            {
+                return BadRequest("Ocorreu um erro ao atualizar a despesa");
+            }
             return Ok(_mapper.Map<ExpenseResponseDTO>(updatedExpense));
         }
 
         // POST: api/Expenses
         [HttpPost]
-        public async Task<ActionResult<Expense>> PostExpense(ExpenseRequestDTO expenseRequestDTO)
+        public async Task<ActionResult<Expense>> PostExpense([FromBody] ExpenseRequestDTO expenseRequestDTO)
         {
             var createExpense = _mapper.Map<Expense>(expenseRequestDTO);
             if (createExpense == null)
@@ -73,7 +74,7 @@ namespace api_gestao_despesas.Controllers
 
         // DELETE: api/Expenses/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteExpense(int id)
+        public async Task<IActionResult> DeleteExpense([FromRoute] int id)
         {
             var getExpense = await _repository.GetById(id);
             if (getExpense == null)
