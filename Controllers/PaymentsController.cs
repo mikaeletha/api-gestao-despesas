@@ -14,13 +14,13 @@ namespace api_gestao_despesas.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IPaymentRepository _repository;
-        private readonly IExpenseRepository _expenseRepository; // Adicione esta linha
+        private readonly IExpenseRepository _expenseRepository;
 
-        public PaymentsController(IMapper mapper, IPaymentRepository repository, IExpenseRepository expenseRepository) // Adicione IExpenseRepository aqui
+        public PaymentsController(IMapper mapper, IPaymentRepository repository, IExpenseRepository expenseRepository
         {
             _mapper = mapper;
             _repository = repository;
-            _expenseRepository = expenseRepository; // Inicialize o _expenseRepository
+            _expenseRepository = expenseRepository; 
         }
 
         // GET: api/Payments
@@ -33,7 +33,7 @@ namespace api_gestao_despesas.Controllers
 
         // GET: api/Payments/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Payment>> GetPayment(int id)
+        public async Task<ActionResult<Payment>> GetPayment([FromRoute] int id)
         {
             var getPayment = await _repository.GetById(id);
             if (getPayment == null)
@@ -46,7 +46,7 @@ namespace api_gestao_despesas.Controllers
 
         // PUT: api/Payments/5/expenseId
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPayment(int id, PaymentRequestDTO paymentRequestDTO)
+        public async Task<IActionResult> PutPayment([FromRoute]int id,[FromBody] PaymentRequestDTO paymentRequestDTO)
         {
             var findPayment = await _repository.GetById(id);
             if (findPayment == null)
@@ -85,7 +85,7 @@ namespace api_gestao_despesas.Controllers
 
         // DELETE: api/Payments/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePayment(int id)
+        public async Task<IActionResult> DeletePayment([FromRoute]int id)
         {
             var getPayment = await _repository.GetById(id);
             if (getPayment == null)
