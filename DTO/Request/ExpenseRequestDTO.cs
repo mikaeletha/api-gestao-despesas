@@ -5,7 +5,6 @@ namespace api_gestao_despesas.DTO.Request
 {
     public class ExpenseRequestDTO
     {
-        
         [Required]
         public decimal ValueExpense { get; set; }
 

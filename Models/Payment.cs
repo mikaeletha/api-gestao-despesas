@@ -15,7 +15,7 @@ namespace api_gestao_despesas.Models
         // Outros campos do pagamento
 
         [Required]
-        public int ExpensesId { get; set; }
+        public int ExpenseId { get; set; }
         public Expense Expense { get; set; }
     }
 }

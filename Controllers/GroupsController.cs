@@ -20,8 +20,6 @@ namespace api_gestao_despesas.Controllers
             _repository = repository;
         }
 
-
-
         // GET: api/Groups
         [HttpGet]
         public async Task<ActionResult> GetAll()
@@ -39,7 +37,6 @@ namespace api_gestao_despesas.Controllers
             {
                 return BadRequest("Grupo não encontrado");
             }
-
             return Ok(_mapper.Map<GroupsResponseDTO>(getGroups)); ;
         }
 
