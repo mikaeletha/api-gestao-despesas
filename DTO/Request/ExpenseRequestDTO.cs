@@ -13,5 +13,7 @@ namespace api_gestao_despesas.DTO.Request
 
         [Required]
         public string Description { get; set; }
+
+        public int GroupId { get; set; }
     }
 }

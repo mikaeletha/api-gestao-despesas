@@ -9,7 +9,10 @@ namespace api_gestao_despesas.DTO.Response
         [Key]
         public int Id { get; set; }
 
+        //[Required]
+        //public decimal Amount { get; set; }
+
         [Required]
-        public decimal Amount { get; set; }
+        public bool PaymentStatus { get; set; }
     }
 }

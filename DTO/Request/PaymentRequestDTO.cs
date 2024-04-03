@@ -6,9 +6,12 @@ namespace api_gestao_despesas.DTO.Request
     public class PaymentRequestDTO
 
     {
+        //[Required]
+        //public decimal Amount { get; set; }
+        //// Outros campos do pagamento
+
         [Required]
-        public decimal Amount { get; set; }
-        // Outros campos do pagamento
+        public bool PaymentStatus { get; set; }
 
         [Required]
         public int expenseId { get; set; }

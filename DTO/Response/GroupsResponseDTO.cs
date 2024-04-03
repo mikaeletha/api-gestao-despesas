@@ -7,10 +7,13 @@ namespace api_gestao_despesas.DTO.Response
     public class GroupsResponseDTO
     {
         [Key]
-        public int IdGroup { get; set; }
+        public int Id { get; set; }
 
         [Required]
         public string NameGroup { get; set; }
+
+        [Required]
+        public ICollection<ExpenseResponseDTO> Expenses { get; set; }
 
     }
 }

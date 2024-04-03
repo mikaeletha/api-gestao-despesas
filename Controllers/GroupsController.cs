@@ -13,11 +13,13 @@ namespace api_gestao_despesas.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IGroupsRepository _repository;
+        private readonly IExpenseRepository _expenseRepository;
 
-        public GroupsController(IMapper mapper, IGroupsRepository repository)
+        public GroupsController(IMapper mapper, IGroupsRepository repository, IExpenseRepository expenseRepository)
         {
             _mapper = mapper;
             _repository = repository;
+            _expenseRepository = expenseRepository;
         }
 
         // GET: api/Groups
@@ -29,10 +31,10 @@ namespace api_gestao_despesas.Controllers
         }
 
         // GET: api/Groups/5
-        [HttpGet("{IdGroups}")]
-        public async Task<ActionResult<Group>> GetGroups(int IdGroups)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Group>> GetGroups(int id)
         {
-            var getGroups = await _repository.GetById(IdGroups);
+            var getGroups = await _repository.GetById(id);
             if (getGroups == null)
             {
                 return BadRequest("Grupo não encontrado");
@@ -41,10 +43,10 @@ namespace api_gestao_despesas.Controllers
         }
 
         // PUT: api/Groups/5
-        [HttpPut("{IdGroups}")]
-        public async Task<IActionResult> PutGroups(int IdGroups, PaymentRequestDTO groupsRequestDTO)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutGroups(int id, PaymentRequestDTO groupsRequestDTO)
         {
-            var getGroups = await _repository.GetById(IdGroups);
+            var getGroups = await _repository.GetById(id);
             if (getGroups == null)
             {
                 return BadRequest("Ocorreu um erro ao alterar o grupo");
@@ -69,15 +71,15 @@ namespace api_gestao_despesas.Controllers
         }
 
         // DELETE: api/Groups/5
-        [HttpDelete("{IdGroups}")]
-        public async Task<IActionResult> DeleteGroups(int IdGroups)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteGroups(int id)
         {
-            var getGroups = await _repository.GetById(IdGroups);
+            var getGroups = await _repository.GetById(id);
             if (getGroups == null)
             {
                 return BadRequest("Grupo não encontrado");
             }
-            var deleteGroups = await _repository.Delete(IdGroups);
+            var deleteGroups = await _repository.Delete(id);
             return NoContent();
         }
     }
