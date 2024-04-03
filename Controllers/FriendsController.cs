@@ -1,5 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using api_gestao_despesas.Models;
+using api_gestao_despesas.DTO.Response;
+using api_gestao_despesas.DTO.Request;
+using api_gestao_despesas.Repository.Interface;
+using AutoMapper;
 
 namespace api_gestao_despesas.Controllers
 {
@@ -7,95 +11,77 @@ namespace api_gestao_despesas.Controllers
     [ApiController]
     public class FriendsController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IMapper _mapper;
+        private readonly IFriendRepository _repository;
 
-        public FriendsController(AppDbContext context)
+        public FriendsController(IMapper mapper, IFriendRepository repository)
         {
-            _context = context;
+            _mapper = mapper;
+            _repository = repository;
         }
+
+
 
         // GET: api/Friends
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Friend>>> GetFriends()
+        public async Task<ActionResult> GetAll()
         {
-            return await _context.Friends.ToListAsync();
+            var friends = await _repository.GetAll();
+            return Ok(_mapper.Map<List<FriendResponseDTO>>(friends));
         }
 
         // GET: api/Friends/5
         [HttpGet("{Id}")]
-        public async Task<ActionResult<Friend>> GetFriend(int id)
+        public async Task<ActionResult<Friend>> GetFriend(int Id)
         {
-            var friend = await _context.Friends.FindAsync(id);
-
-            if (friend == null)
+            var getFriend = await _repository.GetById(Id); // Procura um amigo por ID
+            if (getFriend == null)
             {
-                return NotFound();
+                return BadRequest("Amigo não encontrada");
             }
 
-            return friend;
+            return Ok(_mapper.Map<FriendResponseDTO>(getFriend)); ;
         }
 
-        // PUT: api/Friends/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        //// PUT: api/Friends/5
         [HttpPut("{Id}")]
-        public async Task<IActionResult> PutFriend(int id, Friend friend)
+        public async Task<IActionResult> PutFriend(int Id, FriendRequestDTO friendRequestDTO)
         {
-            if (id != friend.Id)
+            var findExpense = await _repository.GetById(Id);
+            if (findExpense == null)
             {
-                return BadRequest();
+                return BadRequest("Ocorreu um erro ao alterar o amigo");
             }
+            var updateFriend = _mapper.Map<Friend>(friendRequestDTO);
+            var updatedFriend = await _repository.Create(updateFriend);
 
-            _context.Entry(friend).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!FriendExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return Ok(_mapper.Map<FriendResponseDTO>(updatedFriend));
         }
 
         // POST: api/Friends
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Friend>> PostFriend(Friend friend)
+        public async Task<ActionResult<Friend>> PostFriend(FriendRequestDTO friendRequestDTO)
         {
-            _context.Friends.Add(friend);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetFriend", new { id = friend.Id }, friend);
+            var createFriend = _mapper.Map<Friend>(friendRequestDTO);
+            if (createFriend == null)
+            {
+                return BadRequest("Ocorreu um erro ao incluir o amigo");
+            }
+            var savedFriend = await _repository.Create(createFriend);
+            return Ok(_mapper.Map<FriendResponseDTO>(savedFriend));
         }
 
         // DELETE: api/Friends/5
         [HttpDelete("{Id}")]
-        public async Task<IActionResult> DeleteFriend(int id)
+        public async Task<IActionResult> DeleteFriend(int Id)
         {
-            var friend = await _context.Friends.FindAsync(id);
-            if (friend == null)
+            var getFriend = await _repository.GetById(Id);
+            if (getFriend == null)
             {
-                return NotFound();
+                return BadRequest("Amigo não encontrada");
             }
-
-            _context.Friends.Remove(friend);
-            await _context.SaveChangesAsync();
-
+            var deleteFriend = await _repository.Delete(Id);
             return NoContent();
-        }
-
-        private bool FriendExists(int id)
-        {
-            return _context.Friends.Any(e => e.Id == id);
         }
     }
 }
