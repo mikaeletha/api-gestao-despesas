@@ -1,10 +1,15 @@
 ﻿using api_gestao_despesas.DTO.Request;
+using api_gestao_despesas.DTO.Response;
 using api_gestao_despesas.Models;
+using api_gestao_despesas.Repository.Implementation;
+using api_gestao_despesas.Repository.Interface;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
+using NuGet.Protocol.Core.Types;
 
 namespace api_gestao_despesas.Controllers
 {
@@ -12,80 +17,75 @@ namespace api_gestao_despesas.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
+        private readonly IMapper _mapper;
+        private readonly IUserRepository _repository;
+
         private readonly AppDbContext _context;
-        public UsersController(AppDbContext context)
+
+        public UsersController(IMapper mapper, IUserRepository repository)
         {
-            _context = context;
+            _mapper = mapper;
+            _repository = repository;
         }
+
         [HttpGet]
         public async Task<ActionResult> GetAll()
         {
-            var model = await _context.Users.ToListAsync();
-            return Ok(model);
-
-        }
-
-        [HttpPost]
-        public async Task<ActionResult> Create(UsersRequestDTO model)
-        {
-            User novo = new User()
-            {
-                Name = model.Name,
-                Email = model.Email,
-                Password = BCrypt.Net.BCrypt.HashPassword(model.Password),
-                PhoneNumber = model.PhoneNumber
-            };
-
-            model.Password = BCrypt.Net.BCrypt.HashPassword(model.Password);
-
-            _context.Users.Add(novo);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetById", new { id = novo.Id }, novo);
+            var useres = await _repository.GetAll();
+            return Ok(_mapper.Map<List<UserResponseDTO>>(useres));
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult> GetById(int id)
+        public async Task<ActionResult<User>> GetUser([FromRoute] int id)
         {
-            var model = await _context.Users
-                .FirstOrDefaultAsync(c => c.Id == id);
+            var getUser = await _repository.GetById(id); // Procura uma despesa por ID
+            if (getUser == null)
+            {
+                return BadRequest("Usuário não encontrado");
+            }
+            return Ok(_mapper.Map<UserResponseDTO>(getUser)); ;
+        }
 
-            if (model == null) return NotFound();
+        [HttpPost]
+        public async Task<ActionResult<User>> PostUser([FromBody] UserRequestDTO userRequestDTO)
+        {
+            var createUser = _mapper.Map<User>(userRequestDTO);
+            createUser.Name = userRequestDTO.Name;
+            createUser.Email = userRequestDTO.Email;
+            createUser.Password = BCrypt.Net.BCrypt.HashPassword(userRequestDTO.Password);
+            createUser.PhoneNumber = userRequestDTO.PhoneNumber;
 
-            return Ok(model);
+            var savedUser = await _repository.Create(createUser);
+            return Ok(_mapper.Map<UserResponseDTO>(savedUser));
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> Update(int id, UsersRequestDTO model)
+        public async Task<IActionResult> PutUser([FromRoute] int id, [FromBody] UserRequestDTO userRequestDTO)
         {
-            if (id != model.Id) return BadRequest();
+            var findUser = await _repository.GetById(id);
+            if (findUser == null)
+            {
+                return BadRequest("Usuário não encontrado");
+            }
+            var user = _mapper.Map<User>(userRequestDTO);
+            var updatedUser = await _repository.Update(id, user);
 
-            var modeloDb = await _context.Users.AsNoTracking()
-                .FirstOrDefaultAsync(c => c.Id == id);
-
-            if (modeloDb == null) return NotFound();
-
-            modeloDb.Name = model.Name;
-            modeloDb.Email = model.Email;
-            modeloDb.Password = BCrypt.Net.BCrypt.HashPassword(model.Password);
-            modeloDb.PhoneNumber = model.PhoneNumber;
-
-            _context.Users.Update(modeloDb);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            if (updatedUser == null)
+            {
+                return BadRequest("Ocorreu um erro ao atualizar o usuário");
+            }
+            return Ok(_mapper.Map<UserResponseDTO>(updatedUser));
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<IActionResult> DeleteUser([FromRoute] int id)
         {
-            var model = await _context.Users.FindAsync(id);
-
-            if (model == null) return NotFound();
-
-            _context.Users.Remove(model);
-            await _context.SaveChangesAsync();
-
+            var getUser = await _repository.GetById(id);
+            if (getUser == null)
+            {
+                return BadRequest("Usuário não encontrado");
+            }
+            var deleteUser = await _repository.Delete(id);
             return NoContent();
         }
     }

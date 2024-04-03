@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace api_gestao_despesas.DTO.Request
 {
-    public class UsersRequestDTO
+    public class UserRequestDTO
     {
         public int? Id { get; set; }
         [Required]
