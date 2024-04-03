@@ -5,7 +5,6 @@ namespace api_gestao_despesas.DTO.Request
 {
     public class ExpenseRequestDTO
     {
-        
         [Required]
         public decimal ValueExpense { get; set; }
 
@@ -14,5 +13,7 @@ namespace api_gestao_despesas.DTO.Request
 
         [Required]
         public string Description { get; set; }
+
+        public int GroupId { get; set; }
     }
 }

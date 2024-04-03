@@ -10,6 +10,5 @@ namespace api_gestao_despesas.Models
         public int Id { get; set; }
         [Required]
         public string CPF { get; set; }
-
     }
 }

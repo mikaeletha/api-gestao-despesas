@@ -8,9 +8,9 @@ namespace api_gestao_despesas.Repository.Interface
     public interface IGroupsRepository
     {
         Task<List<Group>> GetAll();
-        Task<Group> GetById(int IdGroup);
+        Task<Group> GetById(int id);
         Task<Group> Create(Group groups);
-        Task<Group> Update(Group groups);
-        Task<Group> Delete(int IdGroup);
+        Task<Group> Update(int id, Group groups);
+        Task<Group> Delete(int id);
     }
 }

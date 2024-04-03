@@ -24,9 +24,8 @@ namespace api_gestao_despesas.Repository.Implementation
         {
             var payment = await _context.Payments.FindAsync(id);
             _context.Payments.Remove(payment);
+            await _context.SaveChangesAsync();
             return payment;
-
-            
         }
 
         public async Task<List<Payment>> GetAll()
@@ -40,9 +39,13 @@ namespace api_gestao_despesas.Repository.Implementation
             return await _context.Payments.FindAsync(id);
         }
 
-        public async Task<Payment> Update(Payment payment)
+        public async Task<Payment> Update(int id, Payment payment)
         {
-            _context.Update(payment);
+            var findPayment = await _context.Payments.FindAsync(id);
+
+            findPayment.PaymentStatus = payment.PaymentStatus;
+            findPayment.ExpenseId = payment.ExpenseId; 
+
             await _context.SaveChangesAsync();
             return payment;
         }

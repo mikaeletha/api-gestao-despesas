@@ -4,6 +4,7 @@ using api_gestao_despesas.DTO.Request;
 using api_gestao_despesas.DTO.Response;
 using api_gestao_despesas.Repository.Interface;
 using AutoMapper;
+using NuGet.Protocol.Core.Types;
 
 namespace api_gestao_despesas.Controllers
 {
@@ -13,14 +14,14 @@ namespace api_gestao_despesas.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IPaymentRepository _repository;
+        private readonly IExpenseRepository _expenseRepository;
 
-        public PaymentsController(IMapper mapper, IPaymentRepository repository)
+        public PaymentsController(IMapper mapper, IPaymentRepository repository, IExpenseRepository expenseRepository)
         {
             _mapper = mapper;
             _repository = repository;
+            _expenseRepository = expenseRepository; 
         }
-
-
 
         // GET: api/Payments
         [HttpGet]
@@ -32,7 +33,7 @@ namespace api_gestao_despesas.Controllers
 
         // GET: api/Payments/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Payment>> GetPayment(int id)
+        public async Task<ActionResult<Payment>> GetPayment([FromRoute] int id)
         {
             var getPayment = await _repository.GetById(id);
             if (getPayment == null)
@@ -43,37 +44,48 @@ namespace api_gestao_despesas.Controllers
             return Ok(_mapper.Map<PaymentResponseDTO>(getPayment)); ;
         }
 
-        // PUT: api/Payment/5
+        // PUT: api/Payments/5/expenseId
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPayment(int id, PaymentRequestDTO paymentRequestDTO)
+        public async Task<IActionResult> PutPayment([FromRoute]int id,[FromBody] PaymentRequestDTO paymentRequestDTO)
         {
-            var getPayment = await _repository.GetById(id);
-            if (getPayment == null)
+            var findPayment = await _repository.GetById(id);
+            if (findPayment == null)
             {
-                return BadRequest("Ocorreu um erro ao alterar o pagamenyto");
+                return BadRequest("Pagamento não encontrado");
             }
+
             var updatePayment = _mapper.Map<Payment>(paymentRequestDTO);
-            var updatedPayment = await _repository.Create(updatePayment);
+            var updatedPayment = await _repository.Update(id, updatePayment);
+
+            if (updatedPayment == null)
+            {
+                return BadRequest("Ocorreu um erro ao alterar o pagamento");
+            }
 
             return Ok(_mapper.Map<PaymentResponseDTO>(updatedPayment));
         }
 
         // POST: api/Payments
         [HttpPost]
-        public async Task<ActionResult<Payment>> PostPayment(PaymentRequestDTO paymentRequestDTO)
+        public async Task<ActionResult<Payment>> PostPayment([FromBody] PaymentRequestDTO paymentRequestDTO)
         {
-            var createPayment = _mapper.Map<Payment>(paymentRequestDTO);
-            if (createPayment == null)
+            var expense = await _expenseRepository.GetById(paymentRequestDTO.expenseId);
+            if (expense == null)
             {
-                return BadRequest("Ocorreu um erro ao incluir o pagamento");
+                return BadRequest("Despesa não encontrada");
             }
+
+            var createPayment = _mapper.Map<Payment>(paymentRequestDTO);
+            createPayment.ExpenseId = paymentRequestDTO.expenseId;
+            createPayment.Expense = expense;    
+
             var savedPayment = await _repository.Create(createPayment);
             return Ok(_mapper.Map<PaymentResponseDTO>(savedPayment));
         }
 
         // DELETE: api/Payments/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePayment(int id)
+        public async Task<IActionResult> DeletePayment([FromRoute]int id)
         {
             var getPayment = await _repository.GetById(id);
             if (getPayment == null)

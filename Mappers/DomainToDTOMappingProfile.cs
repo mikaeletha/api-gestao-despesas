@@ -9,9 +9,9 @@ namespace api_gestao_despesas.Mappers
     {
         public DomainToDTOMappingProfile()
         {
-            CreateMap<Payment, PaymentRequestDTO>().ReverseMap();
-            CreateMap<Expense, ExpenseRequestDTO>().ReverseMap();
-            CreateMap<Group, GroupsRequestDTO>().ReverseMap();
+            CreateMap<PaymentRequestDTO, Payment>().ReverseMap();
+            CreateMap<ExpenseRequestDTO, Expense>().ReverseMap();
+            CreateMap<GroupsRequestDTO, Group>().ReverseMap();
             CreateMap<Payment, PaymentResponseDTO>().ReverseMap();
             CreateMap<Expense, ExpenseResponseDTO>().ReverseMap();
             CreateMap<Group, GroupsResponseDTO>().ReverseMap();

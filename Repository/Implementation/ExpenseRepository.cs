@@ -1,5 +1,6 @@
 ﻿using api_gestao_despesas.Models;
 using api_gestao_despesas.Repository.Interface;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace api_gestao_despesas.Repository.Implementation
@@ -24,24 +25,29 @@ namespace api_gestao_despesas.Repository.Implementation
         {
             var expense = await _context.Expenses.FindAsync(id);
             _context.Expenses.Remove(expense);
+            await _context.SaveChangesAsync();
             return expense;
         }
 
         public async Task<List<Expense>> GetAll()
         {
-            var expense = await _context.Expenses.ToListAsync();
-            return expense;
+
+            var expenses = await _context.Expenses.Include(e => e.Payments)
+                .ToListAsync();
+            return expenses;
         }
 
         public async Task<Expense> GetById(int id)
         {
-            return await _context.Expenses.FindAsync(id);
+            var expense =  await _context.Expenses.Include(e => e.Payments)
+                .FirstOrDefaultAsync(e => e.Id == id);
+            return expense;
         }
 
         public async Task<Expense> Update(int id, Expense expense)
         {
             var findExpense = await _context.Expenses.FindAsync(id);
-            _context.Update(expense);
+            _context.Expenses.Update(findExpense);
             await _context.SaveChangesAsync();
             return expense;
         }
