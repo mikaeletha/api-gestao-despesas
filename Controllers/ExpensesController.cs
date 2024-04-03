@@ -13,11 +13,13 @@ namespace api_gestao_despesas.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IExpenseRepository _repository;
+        private readonly IGroupsRepository _groupsRepository;
 
-        public ExpensesController(IMapper mapper, IExpenseRepository repository)
+        public ExpensesController(IMapper mapper, IExpenseRepository repository, IGroupsRepository groupsRepository)
         {
             _mapper = mapper;
             _repository = repository;
+            _groupsRepository = groupsRepository;
         }
 
         // GET: api/Expenses
@@ -63,11 +65,16 @@ namespace api_gestao_despesas.Controllers
         [HttpPost]
         public async Task<ActionResult<Expense>> PostExpense([FromBody] ExpenseRequestDTO expenseRequestDTO)
         {
-            var createExpense = _mapper.Map<Expense>(expenseRequestDTO);
-            if (createExpense == null)
+            var group = await _groupsRepository.GetById(expenseRequestDTO.GroupId);
+            if(group == null)
             {
-                return BadRequest("Ocorreu um erro ao incluir a despesa ");
+                return BadRequest("Grupo não encontrado");
             }
+
+            var createExpense = _mapper.Map<Expense>(expenseRequestDTO);
+            createExpense.GroupId = expenseRequestDTO.GroupId;
+            createExpense.Groups = group;
+
             var savedExpense = await _repository.Create(createExpense);
             return Ok(_mapper.Map<ExpenseResponseDTO>(savedExpense));
         }

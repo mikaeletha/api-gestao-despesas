@@ -20,10 +20,11 @@ namespace api_gestao_despesas.Repository.Implementation
             return groups;
         }
 
-        public async Task<Group> Delete(int IdGroup)
+        public async Task<Group> Delete(int id)
         {
-            var groups = await _context.Groups.FindAsync(IdGroup);
+            var groups = await _context.Groups.FindAsync(id);
             _context.Groups.Remove(groups);
+            await _context.SaveChangesAsync(); 
             return groups;
 
             
@@ -31,18 +32,19 @@ namespace api_gestao_despesas.Repository.Implementation
 
         public async Task<List<Group>> GetAll()
         {
-            var groups = await _context.Groups.ToListAsync();
+            var groups = await _context.Groups.Include(g => g.Expenses).ToListAsync();
             return groups;
         }
 
-        public async Task<Group> GetById(int IdGroup)
+        public async Task<Group> GetById(int id)
         {
-            return await _context.Groups.FindAsync(IdGroup);
+            return await _context.Groups.Include(g => g.Expenses).FirstOrDefaultAsync(g => g.Id == id);
         }
 
-        public async Task<Group> Update(Group groups)
+        public async Task<Group> Update(int id, Group groups)
         {
-            _context.Update(groups);
+            var findGroup = await _context.Groups.FindAsync(id);
+            _context.Groups.Update(groups);
             await _context.SaveChangesAsync();
             return groups;
         }

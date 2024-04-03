@@ -22,6 +22,8 @@ namespace api_gestao_despesas.Models
         [Required]
         public int GroupId { get; set; }
 
+        public Group Groups { get; set; }
+
         [Required]
         public ICollection<Payment> Payments { get; set; }
     }

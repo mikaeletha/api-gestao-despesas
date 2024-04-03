@@ -16,7 +16,7 @@ namespace api_gestao_despesas.Controllers
         private readonly IPaymentRepository _repository;
         private readonly IExpenseRepository _expenseRepository;
 
-        public PaymentsController(IMapper mapper, IPaymentRepository repository, IExpenseRepository expenseRepository
+        public PaymentsController(IMapper mapper, IPaymentRepository repository, IExpenseRepository expenseRepository)
         {
             _mapper = mapper;
             _repository = repository;
