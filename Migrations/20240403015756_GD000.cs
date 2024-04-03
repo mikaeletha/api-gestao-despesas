@@ -12,6 +12,20 @@ namespace api_gestao_despesas.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Groups",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id_friend = table.Column<int>(type: "int", nullable: false),
+                    NameGroup = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Groups", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Expense",
                 columns: table => new
                 {
@@ -25,6 +39,12 @@ namespace api_gestao_despesas.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Expense", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Expense_Groups_GroupId",
+                        column: x => x.GroupId,
+                        principalTable: "Groups",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -34,8 +54,7 @@ namespace api_gestao_despesas.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    ExpensesId = table.Column<int>(type: "int", nullable: false),
-                    ExpenseId = table.Column<int>(type: "int", nullable: true)
+                    ExpenseId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -44,8 +63,14 @@ namespace api_gestao_despesas.Migrations
                         name: "FK_Payments_Expense_ExpenseId",
                         column: x => x.ExpenseId,
                         principalTable: "Expense",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Expense_GroupId",
+                table: "Expense",
+                column: "GroupId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Payments_ExpenseId",
@@ -61,6 +86,9 @@ namespace api_gestao_despesas.Migrations
 
             migrationBuilder.DropTable(
                 name: "Expense");
+
+            migrationBuilder.DropTable(
+                name: "Groups");
         }
     }
 }

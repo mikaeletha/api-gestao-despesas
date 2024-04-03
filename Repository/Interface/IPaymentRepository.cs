@@ -10,7 +10,7 @@ namespace api_gestao_despesas.Repository.Interface
         Task<List<Payment>> GetAll();
         Task<Payment> GetById(int id);
         Task<Payment> Create(Payment payment);
-        Task<Payment> Update(Payment payment);
+        Task<Payment> Update(int id, Payment payment);
         Task<Payment> Delete(int id);
     }
 }

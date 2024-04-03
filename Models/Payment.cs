@@ -9,13 +9,16 @@ namespace api_gestao_despesas.Models
         [Key]
         public int Id { get; set; }
 
-        [Required]
-        [Column(TypeName = "decimal(18, 2)")]
-        public decimal Amount { get; set; }
-        // Outros campos do pagamento
+        //[Required]
+        //[Column(TypeName = "decimal(18, 2)")]
+        //public decimal Amount { get; set; }
+        //Outros campos do pagamento
 
         [Required]
-        public int ExpensesId { get; set; }
+        public bool PaymentStatus{ get; set; }
+
+        [Required]
+        public int ExpenseId { get; set; }
         public Expense Expense { get; set; }
     }
 }
