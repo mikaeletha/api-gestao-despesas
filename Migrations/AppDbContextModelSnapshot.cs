@@ -47,7 +47,7 @@ namespace api_gestao_despesas.Migrations
 
                     b.HasIndex("GroupId");
 
-                    b.ToTable("Expense");
+                    b.ToTable("Expense", (string)null);
                 });
 
             modelBuilder.Entity("api_gestao_despesas.Models.Group", b =>
@@ -67,7 +67,7 @@ namespace api_gestao_despesas.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Groups");
+                    b.ToTable("Groups", (string)null);
                 });
 
             modelBuilder.Entity("api_gestao_despesas.Models.Payment", b =>
@@ -88,7 +88,7 @@ namespace api_gestao_despesas.Migrations
 
                     b.HasIndex("ExpenseId");
 
-                    b.ToTable("Payments");
+                    b.ToTable("Payments", (string)null);
                 });
 
             modelBuilder.Entity("api_gestao_despesas.Models.Expense", b =>

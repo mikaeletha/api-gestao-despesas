@@ -32,13 +32,20 @@ namespace api_gestao_despesas.Repository.Implementation
 
         public async Task<List<Group>> GetAll()
         {
-            var groups = await _context.Groups.Include(g => g.Expenses).ToListAsync();
+            var groups = await _context.Groups.Include(g => g.Expenses)
+                .ThenInclude(e => e.Payments)
+                .ToListAsync();
+
             return groups;
         }
 
         public async Task<Group> GetById(int id)
         {
-            return await _context.Groups.Include(g => g.Expenses).FirstOrDefaultAsync(g => g.Id == id);
+            var groupId = await _context.Groups.Include(g => g.Expenses)
+                .ThenInclude(e => e.Payments)
+                .FirstOrDefaultAsync(g => g.Id == id);
+            
+            return groupId;
         }
 
         public async Task<Group> Update(int id, Group groups)

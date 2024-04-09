@@ -15,14 +15,14 @@ namespace api_gestao_despesas.Models
         {
             builder.Entity<Payment>()
                 .HasOne(p => p.Expense)
-                .WithMany(e => e.Payments)
+                .WithMany(p => p.Payments)
                 .HasForeignKey(p => p.ExpenseId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<Expense>()
-                .HasOne(g => g.Groups)
+                .HasOne(e => e.Groups)
                 .WithMany(e => e.Expenses)
-                .HasForeignKey(g => g.GroupId)
+                .HasForeignKey(e => e.GroupId)
                 .OnDelete(DeleteBehavior.Cascade);
         }
 
