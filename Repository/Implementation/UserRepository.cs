@@ -16,17 +16,19 @@ namespace api_gestao_despesas.Repository.Implementation
 
         public async Task<List<User>> GetAll()
         {
-            var users = await _context.Users.ToListAsync();
+            var users = await _context.Users
+                .Include(u => u.Friends)
+                .Include(u => u.GroupUsers)
+                .ToListAsync();
             return users;
         }
 
         public async Task<User> GetById(int id)
         {
             var user = await _context.Users
+                .Include(u => u.Friends)
+                .Include(u => u.GroupUsers)
                 .FirstOrDefaultAsync(c => c.Id == id);
-
-            // if (user == null) return NotFound();
-
             return user;
         }
 
@@ -47,11 +49,10 @@ namespace api_gestao_despesas.Repository.Implementation
 
         public async Task<User> Delete(int id)
         {
-            var expense = await _context.Users.FindAsync(id);
-            _context.Users.Remove(expense);
+            var user = await _context.Users.FindAsync(id);
+            _context.Users.Remove(user);
             await _context.SaveChangesAsync();
-            return expense;
+            return user;
         }
-
     }
 }

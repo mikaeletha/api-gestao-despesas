@@ -12,5 +12,6 @@ namespace api_gestao_despesas.Repository.Interface
         Task<Group> Create(Group groups);
         Task<Group> Update(int id, Group groups);
         Task<Group> Delete(int id);
+        Task<GroupUsers> AddGroupUsers(int id, GroupUsers groupsUsers);
     }
 }

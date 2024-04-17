@@ -21,27 +21,34 @@ namespace api_gestao_despesas.Repository.Implementation
             return friends;
         }
 
-        public async Task<Friend> Delete(int Id)
+        public async Task<Friend> Delete(int id)
         {
-            var friends = await _context.Friends.FindAsync(Id);
+            var friends = await _context.Friends.FindAsync(id);
             _context.Friends.Remove(friends);
             return friends;
-
-
         }
 
         public async Task<List<Friend>> GetAll()
         {
-            var friends = await _context.Friends.ToListAsync();
+            var friends = await _context.Friends
+                .Include(f => f.User)
+                .ThenInclude(f => f.GroupUsers)
+                .ToListAsync();
+
             return friends;
         }
 
-        public async Task<Friend> GetById(int Id)
+        public async Task<Friend> GetById(int id)
         {
-            return await _context.Friends.FindAsync(Id);
+            var friendId = _context.Friends
+                .Include(f => f.User)
+                .ThenInclude(f => f.GroupUsers)
+                .FirstOrDefaultAsync();
+
+            return await friendId;
         }
 
-        public async Task<Friend> Update(Friend friends)
+        public async Task<Friend> Update(int id, Friend friends)
         {
             _context.Update(friends);
             await _context.SaveChangesAsync();

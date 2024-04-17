@@ -45,15 +45,15 @@ namespace api_gestao_despesas.Controllers
 
         //// PUT: api/Friends/5
         [HttpPut("{Id}")]
-        public async Task<IActionResult> PutFriend(int Id, FriendRequestDTO friendRequestDTO)
+        public async Task<IActionResult> PutFriend(int id, FriendRequestDTO friendRequestDTO)
         {
-            var findExpense = await _repository.GetById(Id);
+            var findExpense = await _repository.GetById(id);
             if (findExpense == null)
             {
                 return BadRequest("Ocorreu um erro ao alterar o amigo");
             }
             var updateFriend = _mapper.Map<Friend>(friendRequestDTO);
-            var updatedFriend = await _repository.Create(updateFriend);
+            var updatedFriend = await _repository.Update(id, updateFriend);
 
             return Ok(_mapper.Map<FriendResponseDTO>(updatedFriend));
         }

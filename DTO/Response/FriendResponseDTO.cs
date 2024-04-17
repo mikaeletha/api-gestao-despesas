@@ -6,12 +6,13 @@ namespace api_gestao_despesas.DTO.Response
 {
     public class FriendResponseDTO
     {
-
-        [Key]
-        public int Id { get; set; }
+        [Required]
+        public int id { get; set; }
+        [Required]
+        public int userId { get; set; }
 
         [Required]
-        public string CPF { get; set; }
+        public int groupId { get; set; }
 
     }
 }

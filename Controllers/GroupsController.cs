@@ -4,6 +4,7 @@ using api_gestao_despesas.DTO.Request;
 using api_gestao_despesas.DTO.Response;
 using api_gestao_despesas.Repository.Interface;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace api_gestao_despesas.Controllers
 {
@@ -13,13 +14,11 @@ namespace api_gestao_despesas.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IGroupsRepository _repository;
-        private readonly IExpenseRepository _expenseRepository;
 
-        public GroupsController(IMapper mapper, IGroupsRepository repository, IExpenseRepository expenseRepository)
+        public GroupsController(IMapper mapper, IGroupsRepository repository)
         {
             _mapper = mapper;
             _repository = repository;
-            _expenseRepository = expenseRepository;
         }
 
         // GET: api/Groups
@@ -27,24 +26,29 @@ namespace api_gestao_despesas.Controllers
         public async Task<ActionResult> GetAll()
         {
             var groups = await _repository.GetAll();
-            return Ok(_mapper.Map<List<GroupsResponseDTO>>(groups));
+            var groupsResponse = new List<GroupsResponseDTO>();
+            foreach (var group in groups)
+            {
+                groupsResponse.Add(GroupsResponseDTO.Of(group));
+            }
+            return Ok(groupsResponse);
         }
 
         // GET: api/Groups/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Group>> GetGroups(int id)
+        public async Task<ActionResult<GroupsResponseDTO>> GetGroups(int id)
         {
             var getGroups = await _repository.GetById(id);
             if (getGroups == null)
             {
                 return BadRequest("Grupo não encontrado");
             }
-            return Ok(_mapper.Map<GroupsResponseDTO>(getGroups)); ;
+            return Ok(GroupsResponseDTO.Of(getGroups));
         }
 
         // PUT: api/Groups/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutGroups(int id, PaymentRequestDTO groupsRequestDTO)
+        public async Task<IActionResult> PutGroups(int id, GroupsRequestDTO groupsRequestDTO)
         {
             var getGroups = await _repository.GetById(id);
             if (getGroups == null)
@@ -52,14 +56,14 @@ namespace api_gestao_despesas.Controllers
                 return BadRequest("Ocorreu um erro ao alterar o grupo");
             }
             var updateGroups = _mapper.Map<Group>(groupsRequestDTO);
-            var updatedGroups = await _repository.Create(updateGroups);
+            var updatedGroups = await _repository.Update(id, updateGroups);
 
             return Ok(_mapper.Map<GroupsResponseDTO>(updatedGroups));
         }
 
         // POST: api/Groups
         [HttpPost]
-        public async Task<ActionResult<Group>> PostPayment(GroupsRequestDTO groupsRequestDTO)
+        public async Task<ActionResult<Group>> PostGroup(GroupsRequestDTO groupsRequestDTO)
         {
             var createGroups = _mapper.Map<Group>(groupsRequestDTO);
             if (createGroups == null)
@@ -82,5 +86,38 @@ namespace api_gestao_despesas.Controllers
             var deleteGroups = await _repository.Delete(id);
             return NoContent();
         }
+
+
+
+
+        [HttpPost("{id}/users")]
+        public async Task<ActionResult<GroupUsers>> AddUserGroup(int id, GroupUsersRequestDTO groupUsersRequestDTO)
+        {
+
+            var findGroup = await _repository.GetById(id);
+            //if (findGroup == null)
+            //{ 
+            //    return BadRequest("Usuário não pode ser adicionado ao grupo"); 
+            //}
+
+            var addUserGroup = _mapper.Map<GroupUsers>(groupUsersRequestDTO);
+            var addedUserGroup = await _repository.AddGroupUsers(id, addUserGroup);
+            return Ok(_mapper.Map<GroupUsers>(addedUserGroup));
+        }
+
+        //[HttpDelete("{id}/usuarios/{usuarioId}")]
+        //public async Task<ActionResult> DeleteUsuario(int id, int usuarioId)
+        //{
+        //    var model = await _context.VeiculosUsuarios
+        //        .Where(c => c.VeiculoId == id && c.UsuarioId == usuarioId)
+        //        .FirstOrDefaultAsync();
+
+        //    if (model == null) return NotFound();
+
+        //    _context.VeiculosUsuarios.Remove(model);
+        //    await _context.SaveChangesAsync();
+
+        //    return NoContent();
+        //}
     }
 }

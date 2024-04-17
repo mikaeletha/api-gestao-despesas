@@ -1,5 +1,7 @@
 ﻿using api_gestao_despesas.Models;
 using api_gestao_despesas.Repository.Interface;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace api_gestao_despesas.Repository.Implementation
@@ -32,8 +34,11 @@ namespace api_gestao_despesas.Repository.Implementation
 
         public async Task<List<Group>> GetAll()
         {
-            var groups = await _context.Groups.Include(g => g.Expenses)
-                .ThenInclude(e => e.Payments)
+            var groups = await _context.Groups
+                .Include(g => g.Expenses)
+                    .ThenInclude(e => e.Payments)
+                .Include(g => g.GroupUsers)
+                    .ThenInclude(g => g.Users)
                 .ToListAsync();
 
             return groups;
@@ -41,11 +46,14 @@ namespace api_gestao_despesas.Repository.Implementation
 
         public async Task<Group> GetById(int id)
         {
-            var groupId = await _context.Groups.Include(g => g.Expenses)
-                .ThenInclude(e => e.Payments)
+            var group = await _context.Groups
+                .Include(g => g.Expenses)
+                    .ThenInclude(e => e.Payments)
+                .Include(g => g.GroupUsers)
+                    .ThenInclude(g => g.Users)
                 .FirstOrDefaultAsync(g => g.Id == id);
-            
-            return groupId;
+
+            return group;
         }
 
         public async Task<Group> Update(int id, Group groups)
@@ -54,6 +62,19 @@ namespace api_gestao_despesas.Repository.Implementation
             _context.Groups.Update(groups);
             await _context.SaveChangesAsync();
             return groups;
+        }
+
+        public async Task<GroupUsers> AddGroupUsers(int id, GroupUsers groupsUsers)
+        {
+            var existingGroupUsers = await _context.Groups.FirstOrDefaultAsync(c => c.Id == id);
+            var existingUsers = await _context.Users.FirstOrDefaultAsync(u => groupsUsers.UserId == id);
+            if ( existingGroupUsers != null && existingUsers != null)
+            {
+                _context.GroupUsers.Add(groupsUsers);
+                await _context.SaveChangesAsync();
+            }
+
+            return groupsUsers;
         }
     }
 }

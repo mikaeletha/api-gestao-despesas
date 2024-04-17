@@ -20,8 +20,6 @@ namespace api_gestao_despesas.Controllers
         private readonly IMapper _mapper;
         private readonly IUserRepository _repository;
 
-        private readonly AppDbContext _context;
-
         public UsersController(IMapper mapper, IUserRepository repository)
         {
             _mapper = mapper;
@@ -31,8 +29,13 @@ namespace api_gestao_despesas.Controllers
         [HttpGet]
         public async Task<ActionResult> GetAll()
         {
-            var useres = await _repository.GetAll();
-            return Ok(_mapper.Map<List<UserResponseDTO>>(useres));
+            var users = await _repository.GetAll();
+            var usersResponse = new List<UserResponseDTO>();
+            foreach ( var user in users)
+            {
+                usersResponse.Add(UserResponseDTO.Of(user));
+            }
+            return Ok(usersResponse);
         }
 
         [HttpGet("{id}")]
@@ -43,7 +46,7 @@ namespace api_gestao_despesas.Controllers
             {
                 return BadRequest("Usuário não encontrado");
             }
-            return Ok(_mapper.Map<UserResponseDTO>(getUser)); ;
+            return Ok(UserResponseDTO.Of(getUser)); ;
         }
 
         [HttpPost]
