@@ -7,8 +7,18 @@ namespace api_gestao_despesas.Models
     public class Friend
     {
         [Key]
-        public int Id { get; set; }
         [Required]
-        public string CPF { get; set; }
+        public int Id { get; set; }
+
+        [Required]
+        public string PhoneNumber { get; set; }
+
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; }
+        [Required]
+        public int userId { get; set; }
+
+        public User User { get; set; }
     }
 }

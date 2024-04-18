@@ -10,12 +10,10 @@ namespace api_gestao_despesas.Models
         public int Id { get; set; }
 
         [Required]
-        public int Id_friend { get; set; }
-
-        [Required]
         public string NameGroup { get; set; }
 
-        [Required]
-        public ICollection<Expense> Expenses { get; set; }
+        public List<Expense> Expenses { get; set; }
+   
+        public ICollection<User> Users { get; set; }
     }
 }

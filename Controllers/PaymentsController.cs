@@ -20,7 +20,7 @@ namespace api_gestao_despesas.Controllers
         {
             _mapper = mapper;
             _repository = repository;
-            _expenseRepository = expenseRepository; 
+            _expenseRepository = expenseRepository;
         }
 
         // GET: api/Payments

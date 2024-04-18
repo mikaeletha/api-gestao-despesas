@@ -11,6 +11,5 @@ namespace api_gestao_despesas.Repository.Interface
         Task<Expense> Create(Expense expense);
         Task<Expense> Update(int id, Expense expense);
         Task<Expense> Delete(int id);
-        Task Create(Friend createFriend);
     }
 }

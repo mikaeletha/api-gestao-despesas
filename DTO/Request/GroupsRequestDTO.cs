@@ -7,9 +7,6 @@ namespace api_gestao_despesas.DTO.Request
 
     {
         [Required]
-        public int Id { get; set; }
-
-        [Required]
         public string  NameGroup { get; set; }
 
     }

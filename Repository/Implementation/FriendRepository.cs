@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 namespace api_gestao_despesas.Repository.Implementation
 {
     public class FriendRepository : IFriendRepository
-
     {
         private readonly AppDbContext _context;
 
@@ -21,32 +20,40 @@ namespace api_gestao_despesas.Repository.Implementation
             return friends;
         }
 
-        public async Task<Friend> Delete(int Id)
+        public async Task<Friend> Delete(int id)
         {
-            var friends = await _context.Friends.FindAsync(Id);
+            var friends = await _context.Friends.FindAsync(id);
             _context.Friends.Remove(friends);
+            await _context.SaveChangesAsync();
             return friends;
-
-
         }
 
         public async Task<List<Friend>> GetAll()
         {
-            var friends = await _context.Friends.ToListAsync();
+            var friends = await _context.Friends
+                .ToListAsync();
+
             return friends;
         }
 
-        public async Task<Friend> GetById(int Id)
+        public async Task<Friend> GetById(int id)
         {
-            return await _context.Friends.FindAsync(Id);
+            var group = await _context.Friends
+                .FirstOrDefaultAsync(g => g.Id == id);
+
+            return group;
         }
 
-        public async Task<Friend> Update(Friend friends)
+        public async Task<Friend> Update(int id, Friend friends)
         {
-            _context.Update(friends);
+            var findFriend = await _context.Friends.FindAsync(id);
+            if (findFriend == null)
+            {
+                throw new InvalidOperationException();
+            }
+            _context.Friends.Update(friends);
             await _context.SaveChangesAsync();
             return friends;
         }
     }
 }
-

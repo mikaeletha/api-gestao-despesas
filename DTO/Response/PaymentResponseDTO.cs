@@ -14,5 +14,14 @@ namespace api_gestao_despesas.DTO.Response
 
         [Required]
         public bool PaymentStatus { get; set; }
+
+        public static PaymentResponseDTO Of(Payment payment)
+        {
+            return new PaymentResponseDTO
+            {
+                Id = payment.Id,
+                PaymentStatus = payment.PaymentStatus
+            };
+        }
     }
 }
