@@ -15,14 +15,12 @@ namespace api_gestao_despesas.Controllers
         private readonly IMapper _mapper;
         private readonly IPaymentRepository _repository;
         private readonly IExpenseRepository _expenseRepository;
-        private readonly IFriendRepository _friendRepository;
 
-        public PaymentsController(IMapper mapper, IPaymentRepository repository, IExpenseRepository expenseRepository, IFriendRepository friendRepository)
+        public PaymentsController(IMapper mapper, IPaymentRepository repository, IExpenseRepository expenseRepository)
         {
             _mapper = mapper;
             _repository = repository;
             _expenseRepository = expenseRepository;
-            _friendRepository = friendRepository;
         }
 
         // GET: api/Payments

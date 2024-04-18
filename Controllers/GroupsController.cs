@@ -63,7 +63,7 @@ namespace api_gestao_despesas.Controllers
 
         // POST: api/Groups
         [HttpPost]
-        public async Task<ActionResult<Group>> PostGroup(GroupsRequestDTO groupsRequestDTO)
+        public async Task<ActionResult<GroupsRequestDTO>> PostGroup(GroupsRequestDTO groupsRequestDTO)
         {
             var createGroups = _mapper.Map<Group>(groupsRequestDTO);
             if (createGroups == null)
@@ -87,24 +87,48 @@ namespace api_gestao_despesas.Controllers
             return NoContent();
         }
 
-
-
-
-        [HttpPost("{id}/users")]
-        public async Task<ActionResult<GroupUsers>> AddUserGroup(int id, GroupUsersRequestDTO groupUsersRequestDTO)
+        [HttpPost("{id}/users/{userId}")]
+        public async Task<ActionResult<GroupsRequestDTO>> AddUserGroup(int id, int userId)
         {
-
             var findGroup = await _repository.GetById(id);
-            //if (findGroup == null)
-            //{ 
-            //    return BadRequest("Usuário não pode ser adicionado ao grupo"); 
-            //}
+            if(findGroup == null)
+            {
+                return NotFound("Grupo não encontrado");
+            }
+            var findUser = await _repository.GetById(userId);
+            if(findUser == null)
+            {
+                return NotFound("Usuário não encontrado");
+            }
 
-            var addUserGroup = _mapper.Map<GroupUsers>(groupUsersRequestDTO);
-            var addedUserGroup = await _repository.AddGroupUsers(id, addUserGroup);
-            return Ok(_mapper.Map<GroupUsers>(addedUserGroup));
+            var addedUserGroup = await _repository.AddGroupUsers(id, userId);
+
+            return Ok(_mapper.Map<GroupsRequestDTO>(addedUserGroup));
         }
 
+        //[HttpPost("{id}/users/{userId}/friend/{friendId}")]
+        //public async Task<ActionResult<GroupsRequestDTO>> AddUserFriendGroup(int id, int userId, int friendId)
+        //{
+        //    var findGroup = await _repository.GetById(id);
+        //    if (findGroup == null)
+        //    {
+        //        return NotFound("Grupo não encontrado");
+        //    }
+        //    var findUser = await _repository.GetById(userId);
+        //    if (findUser == null)
+        //    {
+        //        return NotFound("Usuário não encontrado");
+        //    }
+        //    var findFriend = await _repository.GetById(friendId);
+        //    if(findFriend == null)
+        //    {
+        //        return NotFound("Amigo não encontrado");
+        //    }
+
+        //    var addedUserGroup = await _repository.AddGroupFriendsUser(id, userId, friendId);
+
+        //    return Ok(_mapper.Map<GroupsRequestDTO>(addedUserGroup));
+        //}
         //[HttpDelete("{id}/usuarios/{usuarioId}")]
         //public async Task<ActionResult> DeleteUsuario(int id, int usuarioId)
         //{

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace api_gestao_despesas.DTO.Response
 {
-    public class UserResponseDTO
+    public class UserResponseWithoutGroupDTO
     {
         public int? Id { get; set; }
         [Required]
@@ -15,11 +15,7 @@ namespace api_gestao_despesas.DTO.Response
         [Phone]
         public string PhoneNumber { get; set; }
 
-        public List<GroupsResponseWithOutUsersDTO> Groups { get; set; }
-
-        public List<FriendResponseDTO> Friends { get; set; }
-
-        public static UserResponseDTO Of(User user)
+        public static UserResponseWithoutGroupDTO Of(User user)
         {
             var groups = new List<GroupsResponseWithOutUsersDTO>();
             foreach (Group group in user.Groups)
@@ -27,22 +23,13 @@ namespace api_gestao_despesas.DTO.Response
                 groups.Add(GroupsResponseWithOutUsersDTO.Of(group));
             }
 
-            var friends = new List<FriendResponseDTO>();
-            if (user.Friends != null)
-            {
-                foreach (var friend in user.Friends)
-                {
-                    friends.Add(FriendResponseDTO.Of(friend));
-                }
-            }
-            return new UserResponseDTO
+
+            return new UserResponseWithoutGroupDTO
             {
                 Id = user.Id,
                 Name = user.Name,
                 Email = user.Email,
-                PhoneNumber = user.PhoneNumber,
-                Groups = groups,
-                Friends = friends
+                PhoneNumber = user.PhoneNumber
             };
         }
     }

@@ -51,7 +51,6 @@ builder.Services.AddScoped<IGroupsRepository, GroupsRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IFriendRepository, FriendRepository>();
 
-
 // Services
 //builder.Services.AddScoped<IExpenseService, ExpenseService>();
 //builder.Services.AddScoped<IPaymentService, PaymentService>();

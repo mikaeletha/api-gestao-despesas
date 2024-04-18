@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace api_gestao_despesas.DTO.Response
 {
-    public class GroupsResponseDTO
+    public class GroupsResponseWithOutUsersDTO
     {
         [Key]
         public int Id { get; set; }
@@ -15,11 +15,8 @@ namespace api_gestao_despesas.DTO.Response
         [Required]
         public List<ExpenseResponseDTO> Expenses { get; set; }
 
-        [Required]
-        public List<UserResponseWithoutGroupDTO> Users { get; set; }
 
-
-        public static GroupsResponseDTO Of(Group group)
+        public static GroupsResponseWithOutUsersDTO Of(Group group)
         {
             var expenses = new List<ExpenseResponseDTO>();
             if (group.Expenses != null)
@@ -30,17 +27,11 @@ namespace api_gestao_despesas.DTO.Response
                 }
             }
 
-            var users = new List<UserResponseWithoutGroupDTO>();
-            foreach (User user in group.Users)
-            {
-                users.Add(UserResponseWithoutGroupDTO.Of(user));
-            }
-            return new GroupsResponseDTO
+            return new GroupsResponseWithOutUsersDTO
             {
                 Id = group.Id,
                 NameGroup = group.NameGroup,
-                Expenses = expenses,
-                Users = users
+                Expenses = expenses
             };
         }
 

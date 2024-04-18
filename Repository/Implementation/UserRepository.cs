@@ -17,8 +17,8 @@ namespace api_gestao_despesas.Repository.Implementation
         public async Task<List<User>> GetAll()
         {
             var users = await _context.Users
+                .Include(u => u.Groups)
                 .Include(u => u.Friends)
-                .Include(u => u.GroupUsers)
                 .ToListAsync();
             return users;
         }
@@ -26,8 +26,8 @@ namespace api_gestao_despesas.Repository.Implementation
         public async Task<User> GetById(int id)
         {
             var user = await _context.Users
+                .Include(u => u.Groups)
                 .Include(u => u.Friends)
-                .Include(u => u.GroupUsers)
                 .FirstOrDefaultAsync(c => c.Id == id);
             return user;
         }

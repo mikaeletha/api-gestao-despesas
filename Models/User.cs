@@ -21,8 +21,9 @@ namespace api_gestao_despesas.Models
         [Phone]
         public string PhoneNumber { get; set; }
 
-        public List<Group> Groups { get; set; }
+        public ICollection<Group> Groups { get; set; }
 
-        public List<Friend> Friends { get; set; }
+        public ICollection<Friend> Friends { get; set; }
+
     }
 }

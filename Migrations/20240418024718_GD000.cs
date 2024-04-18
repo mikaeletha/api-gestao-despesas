@@ -92,7 +92,7 @@ namespace api_gestao_despesas.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_GroupUsers", x => new { x.UserId, x.GroupId });
+                    table.PrimaryKey("PK_GroupUsers", x => new { x.GroupId, x.UserId });
                     table.ForeignKey(
                         name: "FK_GroupUsers_Groups_GroupId",
                         column: x => x.GroupId,
@@ -138,9 +138,9 @@ namespace api_gestao_despesas.Migrations
                 column: "userId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_GroupUsers_GroupId",
+                name: "IX_GroupUsers_UserId",
                 table: "GroupUsers",
-                column: "GroupId");
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Payments_ExpenseId",

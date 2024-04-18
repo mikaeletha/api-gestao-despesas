@@ -39,7 +39,7 @@ namespace api_gestao_despesas.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser([FromRoute] int id)
+        public async Task<ActionResult<UserResponseDTO>> GetUser([FromRoute] int id)
         {
             var getUser = await _repository.GetById(id); // Procura uma despesa por ID
             if (getUser == null)

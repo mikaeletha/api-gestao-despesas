@@ -5,7 +5,6 @@ namespace api_gestao_despesas.DTO.Request
 {
     public class UserRequestDTO
     {
-        public int? Id { get; set; }
         [Required]
         public string Name { get; set; }
         [Required]

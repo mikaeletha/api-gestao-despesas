@@ -14,6 +14,6 @@ namespace api_gestao_despesas.Models
 
         public List<Expense> Expenses { get; set; }
    
-        public List<User> Users { get; set; }
+        public ICollection<User> Users { get; set; }
     }
 }

@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 namespace api_gestao_despesas.Repository.Implementation
 {
     public class FriendRepository : IFriendRepository
-
     {
         private readonly AppDbContext _context;
 
@@ -25,14 +24,13 @@ namespace api_gestao_despesas.Repository.Implementation
         {
             var friends = await _context.Friends.FindAsync(id);
             _context.Friends.Remove(friends);
+            await _context.SaveChangesAsync();
             return friends;
         }
 
         public async Task<List<Friend>> GetAll()
         {
             var friends = await _context.Friends
-                .Include(f => f.User)
-                .ThenInclude(f => f.GroupUsers)
                 .ToListAsync();
 
             return friends;
@@ -40,20 +38,22 @@ namespace api_gestao_despesas.Repository.Implementation
 
         public async Task<Friend> GetById(int id)
         {
-            var friendId = _context.Friends
-                .Include(f => f.User)
-                .ThenInclude(f => f.GroupUsers)
-                .FirstOrDefaultAsync();
+            var group = await _context.Friends
+                .FirstOrDefaultAsync(g => g.Id == id);
 
-            return await friendId;
+            return group;
         }
 
         public async Task<Friend> Update(int id, Friend friends)
         {
-            _context.Update(friends);
+            var findFriend = await _context.Friends.FindAsync(id);
+            if (findFriend == null)
+            {
+                throw new InvalidOperationException();
+            }
+            _context.Friends.Update(friends);
             await _context.SaveChangesAsync();
             return friends;
         }
     }
 }
-

@@ -27,12 +27,6 @@ namespace api_gestao_despesas.Models
                 .HasForeignKey(e => e.GroupId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.Entity<Friend>()
-                .HasOne(f => f.User)
-                .WithMany(f => f.Friends)
-                .HasForeignKey(f => f.userId)
-                .OnDelete(DeleteBehavior.Cascade);
-
             builder.Entity<Group>()
                 .HasMany(g => g.Users)
                 .WithMany(g => g.Groups)
@@ -40,6 +34,12 @@ namespace api_gestao_despesas.Models
                     l => l.HasOne(typeof(User)).WithMany().HasForeignKey("UserId").HasPrincipalKey(nameof(User.Id)),
                     r => r.HasOne(typeof(Group)).WithMany().HasForeignKey("GroupId").HasPrincipalKey(nameof(Group.Id)),
                     j => j.HasKey("GroupId", "UserId"));
+
+            builder.Entity<Friend>()
+                .HasOne(f => f.User)
+                .WithMany(u => u.Friends)
+                .HasForeignKey(f => f.userId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             //builder.Entity<GroupUsers>()
             //    .HasKey(g => new { g.UserId, g.GroupId });
@@ -79,8 +79,7 @@ namespace api_gestao_despesas.Models
         public DbSet<Expense> Expenses { get; set; }
         public DbSet<Payment> Payments { get; set; }
         public DbSet<Group> Groups { get; set; }
-        public DbSet<Friend> Friends { get; set; }
         public DbSet<User> Users { get; set; }
-        public DbSet<GroupUsers> GroupUsers { get; set; }
+        public DbSet<Friend> Friends { get; set; }
     }
 }
