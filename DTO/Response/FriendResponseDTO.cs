@@ -7,14 +7,8 @@ namespace api_gestao_despesas.DTO.Response
     public class FriendResponseDTO
     {
         [Required]
-        public int Id { get; set; }
+        public int FriendId { get; set; }
 
-        [Required]
-        public string PhoneNumber { get; set; }
-
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; }
         [Required]
         public int UserId { get; set; }
 
@@ -22,10 +16,18 @@ namespace api_gestao_despesas.DTO.Response
         {
             return new FriendResponseDTO
             {
-                Id = friend.Id,
-                PhoneNumber = friend.PhoneNumber,
-                Email = friend.Email,
-                UserId = friend.userId
+                FriendId = friend.FriendId,
+                UserId = friend.UserId
+            };
+        }
+
+
+        public static FriendResponseDTO Of(User user, User friend)
+        {
+            return new FriendResponseDTO
+            {
+                FriendId = friend.Id,
+                UserId = user.Id
             };
         }
 

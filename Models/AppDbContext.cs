@@ -27,53 +27,37 @@ namespace api_gestao_despesas.Models
                 .HasForeignKey(e => e.GroupId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.Entity<Group>()
-                .HasMany(g => g.Users)
-                .WithMany(g => g.Groups)
-                .UsingEntity("GroupUsers",
-                    l => l.HasOne(typeof(User)).WithMany().HasForeignKey("UserId").HasPrincipalKey(nameof(User.Id)),
-                    r => r.HasOne(typeof(Group)).WithMany().HasForeignKey("GroupId").HasPrincipalKey(nameof(Group.Id)),
-                    j => j.HasKey("GroupId", "UserId"));
-
-            builder.Entity<Friend>()
-                .HasOne(f => f.User)
-                .WithMany(u => u.Friends)
-                .HasForeignKey(f => f.userId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            //builder.Entity<GroupUsers>()
-            //    .HasKey(g => new { g.UserId, g.GroupId });
-
-            //builder.Entity<GroupUsers>()
-            //    .HasOne(g => g.Users)
-            //    .WithMany(g => g.GroupUsers)
-            //    .HasForeignKey(g => g.UserId)
-            //    .OnDelete(DeleteBehavior.Cascade);
-
-            //builder.Entity<GroupUsers>()
-            //    .HasOne(g => g.Groups)
-            //    .WithMany(g => g.GroupUsers)
-            //    .HasForeignKey(g => g.GroupId)
-            //    .OnDelete(DeleteBehavior.Cascade);
-
-            //builder.Entity<User>()
-            //    .HasMany(u => u.Groups)
-            //    .WithMany(g => g.Users)
+            //builder.Entity<Group>()
+            //    .HasOne(g => g.Owner)
+            //    .HasMany(g => g.Friends)
+            //    .WithMany(g => g.Groups)
             //    .UsingEntity("GroupUsers",
-            //    l => l.HasOne(typeof(Group))
-            //    .WithMany()
-            //    .HasForeignKey("GroupId").HasPrincipalKey(nameof(Group.Id)),
-            //    r => r.HasOne(typeof(User))
-            //    .WithMany()
-            //    .HasForeignKey("UserId").HasPrincipalKey(nameof(User.Id)),
-            //    j => j.HasKey("UserId", "GroupId"));
+            //        l => l.HasOne(typeof(User)).WithMany().HasForeignKey("UserId").HasPrincipalKey(nameof(User.Id)),
+            //        r => r.HasOne(typeof(Group)).WithMany().HasForeignKey("GroupId").HasPrincipalKey(nameof(Group.Id)),
+            //        j => j.HasKey("GroupId", "UserId"));
 
-            //builder.Entity<User>()
-            //     .HasMany(u => u.Groups)
-            //     .WithMany(g => g.Users)
-            //     .UsingEntity(j => j.ToTable("UserGroups"));
+            builder.Entity<Group>()
+                .HasOne(g => g.Owner)
+                .WithMany()
+                .HasForeignKey(g => g.OwnerId)
+                .OnDelete(DeleteBehavior.Restrict);
 
+            builder.Entity<Group>()
+                .HasMany(g => g.Friends)
+                .WithMany(u => u.Groups)
+                .UsingEntity(j =>
+                {
+                    j.ToTable("GroupUsers");
+                    j.HasOne(typeof(User)).WithMany().HasForeignKey("UserId").OnDelete(DeleteBehavior.Restrict);
+                    j.HasOne(typeof(Group)).WithMany().HasForeignKey("GroupId").OnDelete(DeleteBehavior.Restrict);
 
+                });
+
+            builder.Entity<Payment>()
+                .HasOne(p => p.User)
+                .WithMany(u => u.Payments)
+                .HasForeignKey(p => p.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
 
         public DbSet<Expense> Expenses { get; set; }

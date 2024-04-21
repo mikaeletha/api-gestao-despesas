@@ -18,7 +18,6 @@ namespace api_gestao_despesas.Repository.Implementation
         {
             var users = await _context.Users
                 .Include(u => u.Groups)
-                .Include(u => u.Friends)
                 .ToListAsync();
             return users;
         }
@@ -27,7 +26,6 @@ namespace api_gestao_despesas.Repository.Implementation
         {
             var user = await _context.Users
                 .Include(u => u.Groups)
-                .Include(u => u.Friends)
                 .FirstOrDefaultAsync(c => c.Id == id);
             return user;
         }
@@ -52,6 +50,15 @@ namespace api_gestao_despesas.Repository.Implementation
             var user = await _context.Users.FindAsync(id);
             _context.Users.Remove(user);
             await _context.SaveChangesAsync();
+            return user;
+        }
+
+        public async Task<List<User>> GetAllByIds(List<int> ids)
+        {
+            var user = await _context.Users
+                .Include(u => u.Groups)
+                .Where(t => ids.Contains(t.Id))
+                .ToListAsync();
             return user;
         }
     }

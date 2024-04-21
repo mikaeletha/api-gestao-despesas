@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using NuGet.Protocol.Core.Types;
+using System.Linq;
 
 namespace api_gestao_despesas.Controllers
 {
@@ -19,11 +20,13 @@ namespace api_gestao_despesas.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IUserRepository _repository;
+        private readonly IFriendRepository _friendRepository;
 
-        public UsersController(IMapper mapper, IUserRepository repository)
+        public UsersController(IMapper mapper, IUserRepository repository, IFriendRepository friendRepository)
         {
             _mapper = mapper;
             _repository = repository;
+            _friendRepository = friendRepository;
         }
 
         [HttpGet]
@@ -33,7 +36,15 @@ namespace api_gestao_despesas.Controllers
             var usersResponse = new List<UserResponseDTO>();
             foreach ( var user in users)
             {
-                usersResponse.Add(UserResponseDTO.Of(user));
+
+                var listFriends = _friendRepository.GetAllByUser(user.Id).Result;
+                var userIds = new List<int>();
+                foreach (var friend in listFriends)
+                {
+                    userIds.Add(friend.FriendId);
+                }
+                var friends = _repository.GetAllByIds(userIds);
+                usersResponse.Add(UserResponseDTO.Of(user, friends.Result));
             }
             return Ok(usersResponse);
         }
@@ -46,7 +57,15 @@ namespace api_gestao_despesas.Controllers
             {
                 return BadRequest("Usuário não encontrado");
             }
-            return Ok(UserResponseDTO.Of(getUser)); ;
+
+            var listFriends = _friendRepository.GetAllByUser(id).Result;
+            var userIds = new List<int>();
+            foreach (var friend in listFriends)
+            {
+                userIds.Add(friend.FriendId);
+            }
+            var friends = _repository.GetAllByIds(userIds);
+            return Ok(UserResponseDTO.Of(getUser, friends.Result));
         }
 
         [HttpPost]

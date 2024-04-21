@@ -13,7 +13,18 @@ namespace api_gestao_despesas.Models
         public string NameGroup { get; set; }
 
         public List<Expense> Expenses { get; set; }
-   
-        public ICollection<User> Users { get; set; }
+
+        
+        [Column(TypeName = "decimal(18, 2)")]
+        public decimal TotalExpense { get; set; }
+
+        [Column(TypeName = "decimal(18, 2)")]
+        public decimal ExpenseShare { get; set; }
+
+        public User Owner { get; set; }
+
+        public int OwnerId { get; set; }
+
+        public ICollection<User> Friends { get; set; }
     }
 }

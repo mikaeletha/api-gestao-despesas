@@ -28,9 +28,11 @@ namespace api_gestao_despesas.Repository.Implementation
             return friends;
         }
 
-        public async Task<List<Friend>> GetAll()
+        public async Task<List<Friend>> GetAllByUser(int userId)
         {
+            
             var friends = await _context.Friends
+                .Where(f => f.UserId == userId)
                 .ToListAsync();
 
             return friends;

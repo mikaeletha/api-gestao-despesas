@@ -15,11 +15,15 @@ namespace api_gestao_despesas.DTO.Response
         [Phone]
         public string PhoneNumber { get; set; }
 
+        public bool PaymentMade { get; set; }
+
+        public decimal AmountToPay { get; set; }
+
         public List<GroupsResponseWithOutUsersDTO> Groups { get; set; }
 
         public List<FriendResponseDTO> Friends { get; set; }
 
-        public static UserResponseDTO Of(User user)
+        public static UserResponseDTO Of(User user, List<User> friends)
         {
             var groups = new List<GroupsResponseWithOutUsersDTO>();
             foreach (Group group in user.Groups)
@@ -27,12 +31,12 @@ namespace api_gestao_despesas.DTO.Response
                 groups.Add(GroupsResponseWithOutUsersDTO.Of(group));
             }
 
-            var friends = new List<FriendResponseDTO>();
-            if (user.Friends != null)
+            var friendsList = new List<FriendResponseDTO>();
+            if (friends != null)
             {
-                foreach (var friend in user.Friends)
+                foreach (var friend in friends)
                 {
-                    friends.Add(FriendResponseDTO.Of(friend));
+                    friendsList.Add(FriendResponseDTO.Of(user, friend));
                 }
             }
             return new UserResponseDTO
@@ -41,8 +45,10 @@ namespace api_gestao_despesas.DTO.Response
                 Name = user.Name,
                 Email = user.Email,
                 PhoneNumber = user.PhoneNumber,
+                PaymentMade = user.PaymentMade,
+                AmountToPay = user.AmountToPay,
                 Groups = groups,
-                Friends = friends
+                Friends = friendsList
             };
         }
     }
