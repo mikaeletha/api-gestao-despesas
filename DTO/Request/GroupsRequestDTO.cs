@@ -9,5 +9,8 @@ namespace api_gestao_despesas.DTO.Request
         [Required]
         public string  NameGroup { get; set; }
 
+        [Required]
+        public int OwnerId { get; set; }
+
     }
 }

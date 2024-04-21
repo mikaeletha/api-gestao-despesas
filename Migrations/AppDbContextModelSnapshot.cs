@@ -22,19 +22,29 @@ namespace api_gestao_despesas.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("GroupUsers", b =>
+            modelBuilder.Entity("GroupUser", b =>
                 {
-                    b.Property<int>("GroupId")
+                    b.Property<int>("FriendsId")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserId")
+                    b.Property<int>("GroupsId")
                         .HasColumnType("int");
 
-                    b.HasKey("GroupId", "UserId");
+                    b.Property<int?>("GroupId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("FriendsId", "GroupsId");
+
+                    b.HasIndex("GroupId");
+
+                    b.HasIndex("GroupsId");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("GroupUsers");
+                    b.ToTable("GroupUsers", (string)null);
                 });
 
             modelBuilder.Entity("api_gestao_despesas.Models.Expense", b =>
@@ -73,20 +83,13 @@ namespace api_gestao_despesas.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("FriendId")
+                        .HasColumnType("int");
 
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("userId")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("userId");
 
                     b.ToTable("Friends");
                 });
@@ -99,11 +102,22 @@ namespace api_gestao_despesas.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<decimal>("ExpenseShare")
+                        .HasColumnType("decimal(18, 2)");
+
                     b.Property<string>("NameGroup")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("OwnerId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("TotalExpense")
+                        .HasColumnType("decimal(18, 2)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("OwnerId");
 
                     b.ToTable("Groups");
                 });
@@ -122,9 +136,17 @@ namespace api_gestao_despesas.Migrations
                     b.Property<bool>("PaymentStatus")
                         .HasColumnType("bit");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("ValuePayment")
+                        .HasColumnType("decimal(18, 2)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ExpenseId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Payments");
                 });
@@ -136,6 +158,9 @@ namespace api_gestao_despesas.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("AmountToPay")
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -149,6 +174,9 @@ namespace api_gestao_despesas.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("PaymentMade")
+                        .HasColumnType("bit");
+
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -158,19 +186,29 @@ namespace api_gestao_despesas.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("GroupUsers", b =>
+            modelBuilder.Entity("GroupUser", b =>
                 {
+                    b.HasOne("api_gestao_despesas.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("FriendsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("api_gestao_despesas.Models.Group", null)
                         .WithMany()
                         .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("api_gestao_despesas.Models.Group", null)
+                        .WithMany()
+                        .HasForeignKey("GroupsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("api_gestao_despesas.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("api_gestao_despesas.Models.Expense", b =>
@@ -184,15 +222,15 @@ namespace api_gestao_despesas.Migrations
                     b.Navigation("Groups");
                 });
 
-            modelBuilder.Entity("api_gestao_despesas.Models.Friend", b =>
+            modelBuilder.Entity("api_gestao_despesas.Models.Group", b =>
                 {
-                    b.HasOne("api_gestao_despesas.Models.User", "User")
-                        .WithMany("Friends")
-                        .HasForeignKey("userId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                    b.HasOne("api_gestao_despesas.Models.User", "Owner")
+                        .WithMany()
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("User");
+                    b.Navigation("Owner");
                 });
 
             modelBuilder.Entity("api_gestao_despesas.Models.Payment", b =>
@@ -203,7 +241,15 @@ namespace api_gestao_despesas.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("api_gestao_despesas.Models.User", "User")
+                        .WithMany("Payments")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("Expense");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("api_gestao_despesas.Models.Expense", b =>
@@ -218,7 +264,7 @@ namespace api_gestao_despesas.Migrations
 
             modelBuilder.Entity("api_gestao_despesas.Models.User", b =>
                 {
-                    b.Navigation("Friends");
+                    b.Navigation("Payments");
                 });
 #pragma warning restore 612, 618
         }

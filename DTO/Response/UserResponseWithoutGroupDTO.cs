@@ -14,6 +14,11 @@ namespace api_gestao_despesas.DTO.Response
         [Required]
         [Phone]
         public string PhoneNumber { get; set; }
+        public decimal AmountToPay { get; set; }
+
+        public bool PaymentMade { get; set; }
+
+        public List<FriendResponseDTO> Friends { get; set; }
 
         public static UserResponseWithoutGroupDTO Of(User user)
         {
@@ -22,14 +27,15 @@ namespace api_gestao_despesas.DTO.Response
             {
                 groups.Add(GroupsResponseWithOutUsersDTO.Of(group));
             }
-
-
+            
             return new UserResponseWithoutGroupDTO
             {
                 Id = user.Id,
                 Name = user.Name,
                 Email = user.Email,
-                PhoneNumber = user.PhoneNumber
+                PhoneNumber = user.PhoneNumber,
+                PaymentMade = user.PaymentMade,
+                AmountToPay = user.AmountToPay
             };
         }
     }

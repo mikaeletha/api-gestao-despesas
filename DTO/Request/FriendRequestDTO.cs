@@ -5,16 +5,11 @@ namespace api_gestao_despesas.DTO.Request
 {
     public class FriendRequestDTO
     {
-
-        [Required]
-        public string PhoneNumber { get; set; }
-
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; }
         [Required]
         public int UserId { get; set; }
 
+        [Required]
+        public int FriendId { get; set; }
     }
 }
 

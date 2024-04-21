@@ -7,6 +7,7 @@ namespace api_gestao_despesas.Repository.Interface
     public interface IUserRepository
     {
         Task<List<User>> GetAll();
+        Task<List<User>> GetAllByIds(List<int> ids);
         Task<User> GetById(int id);
         Task<User> Create(User user);
         Task<User> Update(int id, User user);

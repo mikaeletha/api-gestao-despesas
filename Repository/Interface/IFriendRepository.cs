@@ -4,7 +4,7 @@ namespace api_gestao_despesas.Repository.Interface
 {
     public interface IFriendRepository
     {
-        Task<List<Friend>> GetAll();
+        Task<List<Friend>> GetAllByUser(int userId);
         Task<Friend> GetById(int id);
         Task<Friend> Create(Friend friend);
         Task<Friend> Update(int id, Friend friend);

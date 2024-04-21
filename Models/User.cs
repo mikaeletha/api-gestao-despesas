@@ -17,13 +17,17 @@ namespace api_gestao_despesas.Models
         [Required]
         [JsonIgnore]
         public string Password { get; set; }
+
+        public bool PaymentMade { get; set; }
         [Required]
         [Phone]
         public string PhoneNumber { get; set; }
 
+        [Column(TypeName = "decimal(18, 2)")]
+        public decimal AmountToPay { get; set; }
+
         public ICollection<Group> Groups { get; set; }
 
-        public ICollection<Friend> Friends { get; set; }
-
+        public ICollection<Payment> Payments { get; set; }
     }
 }
