@@ -24,7 +24,7 @@ namespace api_gestao_despesas.Models
         public User Owner { get; set; }
 
         public int OwnerId { get; set; }
-
+         
         public ICollection<User> Friends { get; set; }
     }
 }

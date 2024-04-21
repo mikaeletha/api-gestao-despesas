@@ -44,7 +44,8 @@ namespace api_gestao_despesas.Repository.Implementation
             var findPayment = await _context.Payments.FindAsync(id);
 
             findPayment.PaymentStatus = payment.PaymentStatus;
-            findPayment.ExpenseId = payment.ExpenseId; 
+            findPayment.ExpenseId = payment.ExpenseId;
+            findPayment.ValuePayment = payment.ValuePayment;
 
             await _context.SaveChangesAsync();
             return payment;

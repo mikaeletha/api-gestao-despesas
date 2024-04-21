@@ -47,7 +47,14 @@ namespace api_gestao_despesas.Repository.Implementation
         public async Task<Expense> Update(int id, Expense expense)
         {
             var findExpense = await _context.Expenses.FindAsync(id);
-            _context.Expenses.Update(findExpense);
+            
+            if (findExpense == null)
+            {
+                throw new InvalidOperationException("Despesa não foi encontrada");
+            }
+            findExpense.Description = expense.Description;
+            findExpense.ValueExpense = expense.ValueExpense;
+            findExpense.Date = expense.Date;
             await _context.SaveChangesAsync();
             return expense;
         }

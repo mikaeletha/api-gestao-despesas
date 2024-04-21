@@ -5,6 +5,9 @@ using api_gestao_despesas.DTO.Response;
 using api_gestao_despesas.Repository.Interface;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using api_gestao_despesas.Repository.Implementation;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace api_gestao_despesas.Controllers
 {
@@ -76,17 +79,18 @@ namespace api_gestao_despesas.Controllers
             return Ok(_mapper.Map<GroupsResponseDTO>(savedGroups));
         }
 
-        // DELETE: api/Groups/5
+        
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteGroups(int id)
+        public async Task<IActionResult> DeleteGroup(int id)
         {
-            var getGroups = await _repository.GetById(id);
-            if (getGroups == null)
-            {
-                return BadRequest("Grupo não encontrado");
-            }
-            var deleteGroups = await _repository.Delete(id);
-            return NoContent();
+                var getGroups = await _repository.GetById(id);
+                if (getGroups == null)
+                {
+                    return BadRequest("Grupo não encontrado");
+                }
+                var deleteGroups = await _repository.Delete(id);
+
+                return NoContent();
         }
 
         [HttpPost("{id}/users/{ownerId}")]

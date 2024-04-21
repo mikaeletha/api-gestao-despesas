@@ -1,4 +1,5 @@
 ﻿using api_gestao_despesas.Models;
+using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 
 namespace api_gestao_despesas.DTO.Response

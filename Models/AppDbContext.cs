@@ -1,4 +1,6 @@
-﻿using Azure;
+﻿using api_gestao_despesas.DTO.Response;
+using Azure;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
@@ -15,6 +17,7 @@ namespace api_gestao_despesas.Models
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            
             builder.Entity<Payment>()
                 .HasOne(p => p.Expense)
                 .WithMany(p => p.Payments)
@@ -26,15 +29,6 @@ namespace api_gestao_despesas.Models
                 .WithMany(e => e.Expenses)
                 .HasForeignKey(e => e.GroupId)
                 .OnDelete(DeleteBehavior.Cascade);
-
-            //builder.Entity<Group>()
-            //    .HasOne(g => g.Owner)
-            //    .HasMany(g => g.Friends)
-            //    .WithMany(g => g.Groups)
-            //    .UsingEntity("GroupUsers",
-            //        l => l.HasOne(typeof(User)).WithMany().HasForeignKey("UserId").HasPrincipalKey(nameof(User.Id)),
-            //        r => r.HasOne(typeof(Group)).WithMany().HasForeignKey("GroupId").HasPrincipalKey(nameof(Group.Id)),
-            //        j => j.HasKey("GroupId", "UserId"));
 
             builder.Entity<Group>()
                 .HasOne(g => g.Owner)
