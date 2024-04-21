@@ -83,7 +83,12 @@ namespace api_gestao_despesas.Repository.Implementation
         {
             await CalculateExpensesForEachUser(id);
             var findGroup = await _context.Groups.FindAsync(id);
-            _context.Groups.Update(groups);
+            if (findGroup == null)
+            {
+                throw new InvalidOperationException("Grupo não pode ser atualizado pois não foi encontrado");
+            }
+            findGroup.NameGroup = groups.NameGroup;
+
             await _context.SaveChangesAsync();
             return groups;
         }

@@ -5,8 +5,14 @@ using api_gestao_despesas.Repository.Interface;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Microsoft.AspNetCore.Builder;
 using System.Text.Json.Serialization;
+using api_gestao_despesas.DTO.Response;
+using System.Security.Claims;
+using Microsoft.OpenApi.Models;
+using api_gestao_despesas.Properties;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+
 // using System.Text;
 // using System.Text.Json.Serialization;
 
@@ -16,8 +22,21 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers()
     .AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
+builder.Services.AddEndpointsApiExplorer();
+
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddAuthentication()
+  .AddBearerToken(IdentityConstants.BearerScheme);
+builder.Services.AddAuthorizationBuilder()
+  .AddPolicy("OwnerOnly", p =>
+  {
+      p.RequireAuthenticatedUser();
+      p.AddAuthenticationSchemes(IdentityConstants.BearerScheme);
+  });
+
 
 builder.Services.AddAuthentication(options =>
 {
@@ -40,7 +59,13 @@ builder.Services.AddAuthentication(options =>
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Gestão de despesas", Version = "v1" });
+
+    // Registro do filtro personalizado
+    c.OperationFilter<AddAuthorizationHeaderParameterOperationFilter>();
+});
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
@@ -51,10 +76,7 @@ builder.Services.AddScoped<IGroupsRepository, GroupsRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IFriendRepository, FriendRepository>();
 
-// Services
-//builder.Services.AddScoped<IExpenseService, ExpenseService>();
-//builder.Services.AddScoped<IPaymentService, PaymentService>();
-//builder.Services.AddScoped<IGroupsService, GroupsService>();
+builder.Services.AddScoped<IAuthorizationHandler, OwnerAuthorizationHandler>();
 
 var app = builder.Build();
 
@@ -64,8 +86,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-
 
 app.UseCors(x => x
      .AllowAnyMethod()

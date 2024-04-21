@@ -6,11 +6,16 @@ using api_gestao_despesas.Repository.Interface;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using NuGet.Protocol.Core.Types;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
+using System.Text;
 
 namespace api_gestao_despesas.Controllers
 {
@@ -27,6 +32,64 @@ namespace api_gestao_despesas.Controllers
             _mapper = mapper;
             _repository = repository;
             _friendRepository = friendRepository;
+        }
+
+        [AllowAnonymous]
+        [HttpPost("login")]
+        public async Task<ActionResult> Authenticate(LoginDTO model)
+        {
+            var usuarioDb = await _repository.GetByEmail(model.Email);
+
+            if (string.IsNullOrEmpty(model.Email) || string.IsNullOrEmpty(BCrypt.Net.BCrypt.HashPassword(model.Password)))
+            {
+                return BadRequest("Email e senha são obrigatórios.");
+            }
+
+            try
+            {
+                var token = await _repository.Login(usuarioDb);
+                return Ok(new { jwtToken = token });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(ex.Message);
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPost("logout")]
+        public async Task<ActionResult> Logout()
+        {
+            // Não é necessário fazer nada aqui para invalidar o token JWT, pois o JWT é baseado em estado.
+            // O token JWT é autônomo e expira após um período de tempo configurado.
+            return Ok("Logout realizado com sucesso.");
+        }
+
+        [HttpPut("{id}/update-password")]
+        public async Task<IActionResult> UpdatePassword(int id, UpdateUserPassword updatePasswordDTO)
+        {
+            var usuarioDb = await _repository.GetByEmail(updatePasswordDTO.Email);
+            var getUser = await _repository.GetById(id);
+            if (id != getUser.Id || usuarioDb.Email != updatePasswordDTO.Email)
+            {
+                return BadRequest("ID do usuário na URL não corresponde ao ID do usuário no corpo da solicitação.");
+            }
+
+            try
+            {
+                var user = _mapper.Map<User>(updatePasswordDTO);
+                var updatedUser = await _repository.UpdatePassword(id, user);
+                if (updatedUser == null)
+                {
+                    return NotFound("Usuário não encontrado.");
+                }
+
+                return Ok("Senha atualizada com sucesso.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro ao atualizar a senha: {ex.Message}");
+            }
         }
 
         [HttpGet]
@@ -82,14 +145,14 @@ namespace api_gestao_despesas.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser([FromRoute] int id, [FromBody] UserRequestDTO userRequestDTO)
+        public async Task<IActionResult> PutUser([FromRoute] int id, [FromBody] UpdateUserRequestDTO updateUserRequestDTO)
         {
             var findUser = await _repository.GetById(id);
             if (findUser == null)
             {
                 return BadRequest("Usuário não encontrado");
             }
-            var user = _mapper.Map<User>(userRequestDTO);
+            var user = _mapper.Map<User>(updateUserRequestDTO);
             var updatedUser = await _repository.Update(id, user);
 
             if (updatedUser == null)
