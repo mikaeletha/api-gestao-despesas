@@ -11,6 +11,7 @@ using System.Security.Claims;
 
 namespace api_gestao_despesas.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class GroupsController : ControllerBase

@@ -88,7 +88,7 @@ namespace api_gestao_despesas.Repository.Implementation
         {
             var userDB = await _context.Users.FirstOrDefaultAsync(u => u.Email == user.Email);
 
-            if (userDB == null || BCrypt.Net.BCrypt.Verify(userDB.Password, user.Password))
+            if (userDB == null || BCrypt.Net.BCrypt.Verify(user.Password, userDB.Password))
             {
                 throw new UnauthorizedAccessException("Usuário ou senha incorretos.");
             }
