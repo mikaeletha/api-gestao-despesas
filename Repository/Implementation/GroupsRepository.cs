@@ -46,18 +46,6 @@ namespace api_gestao_despesas.Repository.Implementation
             return groups;
         }
 
-        //public async Task<Group> GetById(int id)
-        //{
-        //    var group = await _context.Groups
-        //        .Include(g => g.Expenses)
-        //            .ThenInclude(e => e.Payments)
-        //        .Include(g => g.Users)
-        //            .ThenInclude(u => u.Friends.Where(f => u.Groups.Any(gr => gr.Id == id)))
-        //        .FirstOrDefaultAsync(g => g.Id == id);
-
-        //    return group;
-        //}
-
         public async Task<Group> GetById(int id)
         {
             // Carregar o grupo com despesas, pagamentos e usuários
@@ -97,13 +85,13 @@ namespace api_gestao_despesas.Repository.Implementation
         {
             var existingGroup = await _context.Groups.FirstOrDefaultAsync(c => c.Id == id);
             var existingUsers = await _context.Users.FirstOrDefaultAsync(u => ownerId == id);
-            
-            if ( existingGroup == null || existingUsers == null)
+
+            if (existingGroup == null || existingUsers == null)
             {
                 throw new InvalidOperationException();
             }
-            
-            if ( existingGroup.Friends.Contains(existingUsers))
+
+            if (existingGroup.Friends.Contains(existingUsers))
             {
                 throw new InvalidOperationException();
             }

@@ -38,21 +38,33 @@ namespace api_gestao_despesas.Controllers
         [HttpPost("login")]
         public async Task<ActionResult> Authenticate(LoginDTO model)
         {
-            var usuarioDb = await _repository.GetByEmail(model.Email);
-
-            if (string.IsNullOrEmpty(model.Email) || string.IsNullOrEmpty(BCrypt.Net.BCrypt.HashPassword(model.Password)))
+            if (string.IsNullOrEmpty(model.Email) || string.IsNullOrEmpty(model.Password))
             {
                 return BadRequest("Email e senha são obrigatórios.");
             }
 
+            var usuarioDb = await _repository.GetByEmail(model.Email);
+
+            if (usuarioDb == null)
+            {
+                return Unauthorized("Usuário ou senha incorretos.");
+            }
+
             try
             {
+                var isPasswordValid = BCrypt.Net.BCrypt.Verify(model.Password, usuarioDb.Password);
+                if (!isPasswordValid)
+                {
+                    return Unauthorized("Usuário ou senha incorretos.");
+                }
+
                 var token = await _repository.Login(usuarioDb);
                 return Ok(new { jwtToken = token });
             }
-            catch (UnauthorizedAccessException ex)
+            catch (Exception ex)
             {
-                return Unauthorized(ex.Message);
+                // Captura exceções genéricas, pode ser ajustado para capturar tipos específicos de exceção
+                return StatusCode(500, "Ocorreu um erro ao processar sua solicitação.");
             }
         }
 
@@ -131,7 +143,7 @@ namespace api_gestao_despesas.Controllers
             return Ok(UserResponseDTO.Of(getUser, friends.Result));
         }
 
-        [HttpPost]
+        [HttpPost("register")]
         public async Task<ActionResult<User>> PostUser([FromBody] UserRequestDTO userRequestDTO)
         {
             var createUser = _mapper.Map<User>(userRequestDTO);
