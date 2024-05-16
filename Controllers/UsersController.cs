@@ -77,6 +77,7 @@ namespace api_gestao_despesas.Controllers
             return Ok("Logout realizado com sucesso.");
         }
 
+        [AllowAnonymous]
         [HttpPut("{id}/update-password")]
         public async Task<IActionResult> UpdatePassword(int id, UpdateUserPassword updatePasswordDTO)
         {
@@ -104,6 +105,7 @@ namespace api_gestao_despesas.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult> GetAll()
         {
@@ -124,6 +126,7 @@ namespace api_gestao_despesas.Controllers
             return Ok(usersResponse);
         }
 
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<UserResponseDTO>> GetUser([FromRoute] int id)
         {
@@ -143,6 +146,7 @@ namespace api_gestao_despesas.Controllers
             return Ok(UserResponseDTO.Of(getUser, friends.Result));
         }
 
+        [AllowAnonymous]
         [HttpPost("register")]
         public async Task<ActionResult<User>> PostUser([FromBody] UserRequestDTO userRequestDTO)
         {
@@ -156,6 +160,7 @@ namespace api_gestao_despesas.Controllers
             return Ok(_mapper.Map<UserResponseDTO>(savedUser));
         }
 
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUser([FromRoute] int id, [FromBody] UpdateUserRequestDTO updateUserRequestDTO)
         {
@@ -174,6 +179,7 @@ namespace api_gestao_despesas.Controllers
             return Ok(_mapper.Map<UserResponseDTO>(updatedUser));
         }
 
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser([FromRoute] int id)
         {
