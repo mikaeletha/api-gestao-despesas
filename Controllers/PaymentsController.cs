@@ -5,6 +5,7 @@ using api_gestao_despesas.DTO.Response;
 using api_gestao_despesas.Repository.Interface;
 using AutoMapper;
 using NuGet.Protocol.Core.Types;
+using Microsoft.AspNetCore.Authorization;
 
 namespace api_gestao_despesas.Controllers
 {
@@ -24,6 +25,7 @@ namespace api_gestao_despesas.Controllers
         }
 
         // GET: api/Payments
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult> GetAll()
         {
@@ -32,6 +34,7 @@ namespace api_gestao_despesas.Controllers
         }
 
         // GET: api/Payments/5
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<Payment>> GetPayment([FromRoute] int id)
         {
@@ -45,6 +48,7 @@ namespace api_gestao_despesas.Controllers
         }
 
         // PUT: api/Payments/5/expenseId
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPayment([FromRoute]int id,[FromBody] PaymentRequestDTO paymentRequestDTO)
         {
@@ -66,6 +70,7 @@ namespace api_gestao_despesas.Controllers
         }
 
         // POST: api/Payments
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<Payment>> PostPayment([FromBody] PaymentRequestDTO paymentRequestDTO)
         {
@@ -84,6 +89,7 @@ namespace api_gestao_despesas.Controllers
         }
 
         // DELETE: api/Payments/5
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePayment([FromRoute]int id)
         {

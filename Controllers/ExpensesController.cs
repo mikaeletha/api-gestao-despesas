@@ -4,6 +4,7 @@ using api_gestao_despesas.DTO.Response;
 using api_gestao_despesas.DTO.Request;
 using api_gestao_despesas.Repository.Interface;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 
 namespace api_gestao_despesas.Controllers
 {
@@ -23,6 +24,7 @@ namespace api_gestao_despesas.Controllers
         }
 
         // GET: api/Expenses
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult> GetAll()
         {
@@ -31,6 +33,7 @@ namespace api_gestao_despesas.Controllers
         }
 
         // GET: api/Expenses/5
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<Expense>> GetExpense([FromRoute] int id)
         {
@@ -43,6 +46,7 @@ namespace api_gestao_despesas.Controllers
         }
 
         //// PUT: api/Expenses/5
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutExpense([FromRoute]int id, [FromBody] ExpenseRequestDTO expenseRequestDTO)
         {
@@ -62,6 +66,7 @@ namespace api_gestao_despesas.Controllers
         }
 
         // POST: api/Expenses
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<Expense>> PostExpense([FromBody] ExpenseRequestDTO expenseRequestDTO)
         {
@@ -80,6 +85,7 @@ namespace api_gestao_despesas.Controllers
         }
 
         // DELETE: api/Expenses/5
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteExpense([FromRoute] int id)
         {
