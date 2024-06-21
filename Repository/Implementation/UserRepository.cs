@@ -45,6 +45,16 @@ namespace api_gestao_despesas.Repository.Implementation
 
         public async Task<User> Create(User user)
         {
+            var existingUser = await _context.Users
+                .FirstOrDefaultAsync(u => u.Email == user.Email);
+
+            if (existingUser != null)
+            {
+                throw new InvalidOperationException("Email already registered.");
+            }
+
+            user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password); // Hash the password before saving
+
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
             return user;

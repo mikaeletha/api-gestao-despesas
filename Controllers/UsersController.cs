@@ -156,9 +156,17 @@ namespace api_gestao_despesas.Controllers
             createUser.Password = BCrypt.Net.BCrypt.HashPassword(userRequestDTO.Password);
             createUser.PhoneNumber = userRequestDTO.PhoneNumber;
 
-            var savedUser = await _repository.Create(createUser);
-            return Ok(_mapper.Map<UserResponseDTO>(savedUser));
+            try
+            {
+                var savedUser = await _repository.Create(createUser);
+                return Ok(_mapper.Map<UserResponseDTO>(savedUser));
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
+
 
         [Authorize]
         [HttpPut("{id}")]
