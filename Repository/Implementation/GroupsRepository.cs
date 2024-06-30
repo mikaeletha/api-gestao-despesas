@@ -216,10 +216,11 @@ namespace api_gestao_despesas.Repository.Implementation
                         if (ownerGroup.Id == payment.UserId)
                         {
                             var amountPay = ownerGroup.AmountToPay - payment.ValuePayment;
-                            if(amountPay > 0)
+                            if (amountPay > 0)
                             {
                                 ownerGroup.PaymentMade = false;
-                            } else
+                            }
+                            else
                             {
                                 ownerGroup.PaymentMade = true;
                             }
@@ -232,5 +233,6 @@ namespace api_gestao_despesas.Repository.Implementation
             await _context.SaveChangesAsync();
             return group;
         }
+
     }
 }
