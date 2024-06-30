@@ -53,8 +53,6 @@ namespace api_gestao_despesas.Repository.Implementation
                 throw new InvalidOperationException("Email already registered.");
             }
 
-            user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password); // Hash the password before saving
-
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
             return user;
